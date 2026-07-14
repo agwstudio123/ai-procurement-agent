@@ -1,0 +1,59 @@
+[
+  {
+    "id": 1784017768488,
+    "companyName": "AGW SUPPLIER LIMITED",
+    "ownerName": "Abdul waris",
+    "email": "abdulganiyyabdulwaris306@gmail.com",
+    "location": "ibadan",
+    "categories": "Cement, Blocks and Steel",
+    "wallet": "0x6863eec5b8023d59de69695017342e723bd6e87a",
+    "materials": [
+      {
+        "id": 1784018154244,
+        "name": "Cement",
+        "category": "cement",
+        "quantity": "2000",
+        "unit": "Bags",
+        "price": "0.5",
+        "location": "ibadan",
+        "wallet": "",
+        "supplierId": 1784017768488,
+        "supplierName": "AGW SUPPLIER LIMITED",
+        "status": "Available"
+      },
+      {
+        "id": 1784018185050,
+        "name": "Blocks",
+        "category": "Blocks",
+        "quantity": "5000",
+        "unit": "Pieces",
+        "price": "1",
+        "location": "ibadan",
+        "wallet": "",
+        "supplierId": 1784017768488,
+        "supplierName": "AGW SUPPLIER LIMITED",
+        "status": "Available"
+      },
+      {
+        "id": 1784018218945,
+        "name": "Steel",
+        "category": "Steel",
+        "quantity": "3000",
+        "unit": "Pieces",
+        "price": "1",
+        "location": "ibadan",
+        "wallet": "",
+        "supplierId": 1784017768488,
+        "supplierName": "AGW SUPPLIER LIMITED",
+        "status": "Available"
+      }
+    ],
+    "earnings": 0,
+    "activeOrders": 0,
+    "trust": 95,
+    "trusted": true,
+    "cementPrice": 0.5,
+    "blockPrice": 1,
+    "steelPrice": 1
+  }
+]
