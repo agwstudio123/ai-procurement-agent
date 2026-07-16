@@ -1,15 +1,28 @@
 {
   "name": "ai-procurement-agent",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "BuildProcure AI - AI-powered construction procurement platform with Circle USDC payments.",
   "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "server": "node src/index.js",
+    "dev": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "install-all": "npm install && cd client && npm install"
+  },
+  "keywords": [
+    "ai",
+    "construction",
+    "procurement",
+    "circle",
+    "usdc",
+    "hackathon",
+    "react",
+    "express"
+  ],
+  "author": "Abdulganiyy Abdulwaris",
+  "license": "MIT",
   "dependencies": {
     "@circle-fin/developer-controlled-wallets": "^10.8.0",
     "@circle-fin/w3s-pw-web-sdk": "^1.1.11",
