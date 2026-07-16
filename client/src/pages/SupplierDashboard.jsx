@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../api";
 
 export default function SupplierDashboard() {
   const [supplier, setSupplier] = useState(null);
@@ -25,7 +26,7 @@ export default function SupplierDashboard() {
       try {
 
         const response = await fetch(
-          "http://localhost:3000/orders"
+          `${API_URL}/orders`
         );
 
 
@@ -52,15 +53,12 @@ export default function SupplierDashboard() {
 
 
 
-        // TOTAL EARNINGS FROM COMPLETED + PAID ORDERS ONLY
         const total = supplierOrders
-
           .filter(
             (order) =>
               order.status === "Completed" &&
               order.paymentStatus === "Paid"
           )
-
           .reduce(
             (sum, order) =>
               sum +
@@ -91,7 +89,6 @@ export default function SupplierDashboard() {
 
 
 
-    // Auto refresh dashboard data
     const interval = setInterval(
       loadSupplier,
       5000
@@ -142,8 +139,6 @@ export default function SupplierDashboard() {
     <div className="min-h-screen bg-gray-100 p-10">
 
 
-      {/* Header */}
-
       <div className="flex justify-between items-start">
 
         <div>
@@ -188,8 +183,6 @@ export default function SupplierDashboard() {
 
 
 
-
-      {/* Statistics */}
 
       <div className="grid md:grid-cols-4 gap-6 mt-8">
 
@@ -285,8 +278,6 @@ export default function SupplierDashboard() {
 
 
 
-      {/* Company Profile */}
-
       <div className="bg-white rounded-xl shadow p-6 mt-8">
 
 
@@ -300,11 +291,8 @@ export default function SupplierDashboard() {
 
 
           <Link
-
             to="/supplier-profile"
-
             className="text-blue-600 font-semibold hover:underline"
-
           >
 
             ✏️ Edit Profile
@@ -359,8 +347,6 @@ export default function SupplierDashboard() {
 
 
 
-
-      {/* Materials */}
 
       <div className="bg-white rounded-xl shadow p-6 mt-8">
 
