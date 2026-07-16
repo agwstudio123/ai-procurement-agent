@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../api";
 
 export default function ContractorOrders() {
 
@@ -18,7 +19,7 @@ export default function ContractorOrders() {
     try {
 
       const response = await fetch(
-        "http://localhost:3000/orders"
+        `${API_URL}/orders`
       );
 
       const allOrders = await response.json();
@@ -48,17 +49,16 @@ export default function ContractorOrders() {
 
   useEffect(() => {
 
-  loadOrders();
-
-  const interval = setInterval(() => {
     loadOrders();
-  }, 3000);
+
+    const interval = setInterval(() => {
+      loadOrders();
+    }, 3000);
 
 
-  return () => clearInterval(interval);
+    return () => clearInterval(interval);
 
-}, []);
-
+  }, []);
 
 
 
@@ -68,12 +68,14 @@ export default function ContractorOrders() {
     try {
 
       const response = await fetch(
-        `http://localhost:3000/orders/${orderId}`,
+        `${API_URL}/orders/${orderId}`,
         {
           method: "PUT",
+
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify({
             status: "Payment Secured",
             paymentStatus: "Escrowed",
@@ -109,23 +111,24 @@ export default function ContractorOrders() {
 
 
 
-
-
   async function confirmDelivery(orderId) {
 
     try {
 
       const response = await fetch(
-        `http://localhost:3000/orders/${orderId}`,
+        `${API_URL}/orders/${orderId}`,
         {
           method: "PUT",
+
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify({
             status: "Completed",
             paymentStatus: "Paid",
           }),
+
         }
       );
 
@@ -157,23 +160,18 @@ export default function ContractorOrders() {
 
 
 
-
-
   return (
 
     <div className="min-h-screen bg-gray-100 p-10">
 
-
       <h1 className="text-3xl font-bold">
-  🏗 My Procurement Orders
-</h1>
+        🏗 My Procurement Orders
+      </h1>
 
 
       <p className="text-gray-600 mt-2">
         Track all supplier orders.
       </p>
-
-
 
 
 
@@ -190,30 +188,22 @@ export default function ContractorOrders() {
 
       ) : (
 
-
         <div className="grid gap-6 mt-8">
 
-
           {orders.map((order)=>(
-
 
             <div
               key={order.id}
               className="bg-white rounded-xl shadow p-6"
             >
 
-
-
               <div className="flex justify-between">
 
-
                 <div>
-
 
                   <h2 className="text-xl font-bold">
                     {order.supplierName}
                   </h2>
-
 
 
                   <p className="mt-2">
@@ -223,8 +213,6 @@ export default function ContractorOrders() {
                       {order.totalAmount || order.amount} USDC
                     </strong>
                   </p>
-
-
 
 
 
@@ -256,16 +244,12 @@ export default function ContractorOrders() {
                 </div>
 
 
-
                 <span className="font-bold">
                   {order.status}
                 </span>
 
 
-
               </div>
-
-
 
 
 
@@ -280,10 +264,6 @@ export default function ContractorOrders() {
                 💬 Chat Supplier
 
               </Link>
-
-
-
-
 
 
 
@@ -308,10 +288,6 @@ export default function ContractorOrders() {
 
 
 
-
-
-
-
               {order.status === "Delivered" && (
 
                 <button
@@ -332,10 +308,6 @@ export default function ContractorOrders() {
 
 
 
-
-
-
-
               {order.status === "Paid" && (
 
                 <p className="mt-5 text-green-600 font-semibold">
@@ -345,10 +317,6 @@ export default function ContractorOrders() {
                 </p>
 
               )}
-
-
-
-
 
 
 
@@ -362,19 +330,13 @@ export default function ContractorOrders() {
 
               )}
 
-
-
             </div>
-
 
           ))}
 
-
         </div>
 
-
       )}
-
 
     </div>
 
