@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../api";
 
 export default function Notifications() {
 
   const [notifications, setNotifications] = useState([]);
 
   const navigate = useNavigate();
-
 
 
   useEffect(() => {
@@ -28,12 +28,10 @@ export default function Notifications() {
       if (!user) return;
 
 
-
       try {
 
-
         const response = await fetch(
-          `http://localhost:3000/notifications/${user.id}`
+          `${API_URL}/notifications/${user.id}`
         );
 
 
@@ -46,18 +44,19 @@ export default function Notifications() {
 
         // mark notifications as read
         await fetch(
-          `http://localhost:3000/notifications/${user.id}/read`,
+          `${API_URL}/notifications/${user.id}/read`,
           {
             method: "PUT",
           }
         );
 
 
-        // update UI
+
+        // update UI after marking as read
         setNotifications(
-          data.map((notification)=>({
+          data.map((notification) => ({
             ...notification,
-            read:true
+            read: true,
           }))
         );
 
@@ -82,55 +81,25 @@ export default function Notifications() {
 
 
 
- function openNotification(notification) {
+  function openNotification(notification) {
 
 
-  const supplier = JSON.parse(
-    localStorage.getItem("currentSupplier")
-  );
-
-
-  const contractor = JSON.parse(
-    localStorage.getItem("currentContractor")
-  );
-
-
-
-  // Chat notification
-  if(notification.type === "chat") {
-
-    navigate(
-      `/chat/${notification.orderId}`
+    const supplier = JSON.parse(
+      localStorage.getItem("currentSupplier")
     );
 
-    return;
 
-  }
-
-
-
-  // Delivery fee request
-  if(notification.type === "delivery_fee") {
-
-    navigate(
-      `/chat/${notification.orderId}`
+    const contractor = JSON.parse(
+      localStorage.getItem("currentContractor")
     );
 
-    return;
-
-  }
 
 
-
-  // Any order update
-  if(notification.type === "order") {
-
-
-    // Supplier side
-    if(supplier) {
+    // Chat notification
+    if(notification.type === "chat") {
 
       navigate(
-        "/supplier-orders"
+        `/chat/${notification.orderId}`
       );
 
       return;
@@ -139,11 +108,11 @@ export default function Notifications() {
 
 
 
-    // Contractor side
-    if(contractor) {
+    // Delivery fee request
+    if(notification.type === "delivery_fee") {
 
       navigate(
-        "/contractor-orders"
+        `/chat/${notification.orderId}`
       );
 
       return;
@@ -151,10 +120,40 @@ export default function Notifications() {
     }
 
 
+
+    // Order notifications
+    if(notification.type === "order") {
+
+
+      // Supplier side
+      if(supplier) {
+
+        navigate(
+          "/supplier-orders"
+        );
+
+        return;
+
+      }
+
+
+
+      // Contractor side
+      if(contractor) {
+
+        navigate(
+          "/contractor-orders"
+        );
+
+        return;
+
+      }
+
+
+    }
+
+
   }
-
-
-}
 
 
 
@@ -192,7 +191,7 @@ export default function Notifications() {
           ) : (
 
 
-            notifications.map((notification)=>(
+            notifications.map((notification) => (
 
 
               <div
