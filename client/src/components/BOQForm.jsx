@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../api";
 
 export default function BOQForm({ onResult }) {
 
@@ -14,11 +15,10 @@ export default function BOQForm({ onResult }) {
 
     e.preventDefault();
 
-
     try {
 
       const response = await fetch(
-        "http://localhost:3000/procurement",
+        `${API_URL}/procurement`,
         {
           method: "POST",
 
@@ -84,54 +84,54 @@ export default function BOQForm({ onResult }) {
       );
 
 
-   const order = {
+    const order = {
 
-  supplierId: result.supplier.id,
+      supplierId: result.supplier.id,
 
-  supplierName: result.supplier.name,
+      supplierName: result.supplier.name,
 
-  contractorId:
-    contractor?.id || 1,
-
-
-  materials: {
-
-    cement: Number(cement),
-
-    steel: Number(steel),
-
-    blocks: Number(blocks),
-
-  },
+      contractorId:
+        contractor?.id || 1,
 
 
-  amount:
-    result.supplier.totalCost,
+      materials: {
+
+        cement: Number(cement),
+
+        steel: Number(steel),
+
+        blocks: Number(blocks),
+
+      },
 
 
-  totalAmount:
-    result.supplier.totalCost,
+      amount:
+        result.supplier.totalCost,
 
 
-  marketPrice:
-    result.marketPrice,
+      totalAmount:
+        result.supplier.totalCost,
 
 
-  savings:
-    result.savings,
+      marketPrice:
+        result.marketPrice,
 
 
-  walletAddress:
-    result.supplier.walletAddress,
+      savings:
+        result.savings,
 
-};
+
+      walletAddress:
+        result.supplier.walletAddress,
+
+    };
 
 
     try{
 
 
       const response = await fetch(
-        "http://localhost:3000/orders",
+        `${API_URL}/orders`,
         {
 
           method:"POST",
@@ -157,17 +157,17 @@ export default function BOQForm({ onResult }) {
 
       if(data.success){
 
-  alert(
-    "Order placed successfully"
-  );
+        alert(
+          "Order placed successfully"
+        );
 
-}else{
+      }else{
 
-  alert(
-    data.message
-  );
+        alert(
+          data.message
+        );
 
-}
+      }
 
 
     }

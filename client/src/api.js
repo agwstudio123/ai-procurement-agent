@@ -1,0 +1,1 @@
+export const API_URL = "https://buildprocure-ai-backend.onrender.com";
