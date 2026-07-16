@@ -1,0 +1,430 @@
+[
+  {
+    "id": 1784202737737,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "message": "New message from contractor",
+    "read": true,
+    "createdAt": "2026-07-16T11:52:17.737Z"
+  },
+  {
+    "id": 1784202924787,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "chat",
+    "orderId": 1784199336930,
+    "message": "New message from contractor",
+    "read": true,
+    "createdAt": "2026-07-16T11:55:24.787Z"
+  },
+  {
+    "id": 1784205653372,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784205653371,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T12:40:53.372Z"
+  },
+  {
+    "id": 1784206690959,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784206690958,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T12:58:10.959Z"
+  },
+  {
+    "id": 1784206725504,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784206725503,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T12:58:45.505Z"
+  },
+  {
+    "id": 1784206774009,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784206774008,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T12:59:34.009Z"
+  },
+  {
+    "id": 1784206798481,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "New message from supplier",
+    "read": true,
+    "createdAt": "2026-07-16T12:59:58.481Z"
+  },
+  {
+    "id": 1784207387963,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "New message from supplier",
+    "read": true,
+    "createdAt": "2026-07-16T13:09:47.963Z"
+  },
+  {
+    "id": 1784207445314,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "New message from contractor",
+    "read": true,
+    "createdAt": "2026-07-16T13:10:45.314Z"
+  },
+  {
+    "id": 1784208875496,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "New message from contractor",
+    "read": true,
+    "createdAt": "2026-07-16T13:34:35.496Z"
+  },
+  {
+    "id": 1784208903435,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "New message from supplier",
+    "read": true,
+    "createdAt": "2026-07-16T13:35:03.435Z"
+  },
+  {
+    "id": 1784209012177,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "💬 New message from undefined",
+    "read": true,
+    "createdAt": "2026-07-16T13:36:52.177Z"
+  },
+  {
+    "id": 1784209055611,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "💬 New message from TRUST SUPPLIER LIMITED",
+    "read": true,
+    "createdAt": "2026-07-16T13:37:35.611Z"
+  },
+  {
+    "id": 1784209083913,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "💬 New message from undefined",
+    "read": true,
+    "createdAt": "2026-07-16T13:38:03.913Z"
+  },
+  {
+    "id": 1784209323696,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "chat",
+    "orderId": 1784206774008,
+    "message": "💬 New message from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T13:42:03.696Z"
+  },
+  {
+    "id": 1784210940388,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784206774008,
+    "message": "❌ TRUST SUPPLIER LIMITED rejected your order",
+    "read": true,
+    "createdAt": "2026-07-16T14:09:00.388Z"
+  },
+  {
+    "id": 1784210946674,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784210946673,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T14:09:06.674Z"
+  },
+  {
+    "id": 1784212597372,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784210946673,
+    "message": "✅ TRUST SUPPLIER LIMITED accepted your order",
+    "read": true,
+    "createdAt": "2026-07-16T14:36:37.372Z"
+  },
+  {
+    "id": 1784212644040,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784210946673,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T14:37:24.040Z"
+  },
+  {
+    "id": 1784212704121,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784212704120,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T14:38:24.121Z"
+  },
+  {
+    "id": 1784212822670,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784212704120,
+    "message": "❌ TRUST SUPPLIER LIMITED rejected your order",
+    "read": true,
+    "createdAt": "2026-07-16T14:40:22.670Z"
+  },
+  {
+    "id": 1784212842672,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784212842671,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T14:40:42.672Z"
+  },
+  {
+    "id": 1784214496653,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784212842671,
+    "message": "✅ TRUST SUPPLIER LIMITED accepted your order",
+    "read": true,
+    "createdAt": "2026-07-16T15:08:16.653Z"
+  },
+  {
+    "id": 1784214535108,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784212842671,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T15:08:55.108Z"
+  },
+  {
+    "id": 1784214577920,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784214577918,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T15:09:37.920Z"
+  },
+  {
+    "id": 1784214586434,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784214577918,
+    "message": "✅ TRUST SUPPLIER LIMITED accepted your order",
+    "read": true,
+    "createdAt": "2026-07-16T15:09:46.434Z"
+  },
+  {
+    "id": 1784214593158,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "chat",
+    "orderId": 1784214577918,
+    "message": "💬 New message from TRUST SUPPLIER LIMITED",
+    "read": true,
+    "createdAt": "2026-07-16T15:09:53.158Z"
+  },
+  {
+    "id": 1784214593159,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "delivery_fee",
+    "orderId": 1784214577918,
+    "message": "🚚 TRUST SUPPLIER LIMITED requested a delivery fee of 0.55 USDC",
+    "read": true,
+    "createdAt": "2026-07-16T15:09:53.159Z"
+  },
+  {
+    "id": 1784214710580,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784214577918,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T15:11:50.580Z"
+  },
+  {
+    "id": 1784214937127,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784214937124,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T15:15:37.127Z"
+  },
+  {
+    "id": 1784214946179,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784214937124,
+    "message": "✅ TRUST SUPPLIER LIMITED accepted your order",
+    "read": true,
+    "createdAt": "2026-07-16T15:15:46.179Z"
+  },
+  {
+    "id": 1784215007786,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784214937124,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T15:16:47.786Z"
+  },
+  {
+    "id": 1784216952316,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784216952314,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T15:49:12.316Z"
+  },
+  {
+    "id": 1784216963226,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784216952314,
+    "message": "✅ TRUST SUPPLIER LIMITED accepted your order",
+    "read": true,
+    "createdAt": "2026-07-16T15:49:23.226Z"
+  },
+  {
+    "id": 1784216985242,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784216952314,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T15:49:45.242Z"
+  },
+  {
+    "id": 1784223082717,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784223082716,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T17:31:22.717Z"
+  },
+  {
+    "id": 1784223091050,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784223082716,
+    "message": "✅ TRUST SUPPLIER LIMITED accepted your order",
+    "read": true,
+    "createdAt": "2026-07-16T17:31:31.050Z"
+  },
+  {
+    "id": 1784223094948,
+    "userId": 1784101575778,
+    "role": "supplier",
+    "type": "order",
+    "orderId": 1784223094947,
+    "message": "New order received from Contractor",
+    "read": true,
+    "createdAt": "2026-07-16T17:31:34.948Z"
+  },
+  {
+    "id": 1784223114169,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784223094947,
+    "message": "✅ TRUST SUPPLIER LIMITED accepted your order",
+    "read": true,
+    "createdAt": "2026-07-16T17:31:54.170Z"
+  },
+  {
+    "id": 1784223138305,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784223094947,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T17:32:18.305Z"
+  },
+  {
+    "id": 1784223138841,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784223082716,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T17:32:18.841Z"
+  },
+  {
+    "id": 1784223142073,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784223094947,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T17:32:22.073Z"
+  },
+  {
+    "id": 1784223146617,
+    "userId": 1784098221636,
+    "role": "contractor",
+    "type": "order",
+    "orderId": 1784223094947,
+    "message": "🎉 TRUST SUPPLIER LIMITED marked your order as completed",
+    "read": true,
+    "createdAt": "2026-07-16T17:32:26.617Z"
+  }
+]

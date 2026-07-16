@@ -16,7 +16,7 @@ export default function Login() {
     });
   }
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
 
     // Check Contractors
@@ -41,9 +41,12 @@ export default function Login() {
       return;
     }
 
-    // Check Suppliers
-    const suppliers =
-      JSON.parse(localStorage.getItem("suppliers")) || [];
+    // Check Suppliers from backend
+    const response = await fetch(
+      "http://localhost:3000/suppliers"
+    );
+
+    const suppliers = await response.json();
 
     const supplier = suppliers.find(
       (user) =>

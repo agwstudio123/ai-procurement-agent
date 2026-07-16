@@ -21,8 +21,9 @@ export default function PayButton({ supplier }) {
       return;
     }
 
+    console.log("SUPPLIER:", supplier);
+
     try {
-      // Get existing orders
       const existingResponse = await fetch(
         "http://localhost:3000/orders"
       );
@@ -43,6 +44,13 @@ export default function PayButton({ supplier }) {
         return;
       }
 
+      const orderAmount = Number(
+        supplier.totalCost ??
+        supplier.price ??
+        supplier.amount ??
+        0
+      );
+
       const newOrder = {
         id: Date.now(),
 
@@ -54,8 +62,8 @@ export default function PayButton({ supplier }) {
         supplierName: supplier.companyName,
         supplierWallet: supplier.wallet,
 
-        amount: Number(supplier.totalCost),
-        totalAmount: Number(supplier.totalCost),
+        amount: orderAmount,
+        totalAmount: orderAmount,
 
         status: "Pending",
         paymentStatus: "Unpaid",

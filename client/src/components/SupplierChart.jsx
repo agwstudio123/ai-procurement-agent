@@ -7,6 +7,7 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
 
 
@@ -21,10 +22,24 @@ export default function SupplierChart() {
       .then((response) => response.json())
       .then((data) => {
 
-        const chartData = data.map((supplier) => ({
-          name: supplier.supplier,
-          price: supplier.cement,
-        }));
+        const chartData = data.map((supplier) => {
+
+          const cement =
+            supplier.materials?.find(
+              (item) =>
+                item.name.toLowerCase() === "cement"
+            )?.price || 0;
+
+
+          return {
+            name: supplier.companyName,
+            price: Number(cement),
+          };
+
+        });
+
+
+        console.log("CHART DATA:", chartData);
 
         setSuppliers(chartData);
 
@@ -48,35 +63,53 @@ export default function SupplierChart() {
       </h2>
 
 
+      {suppliers.length > 0 ? (
 
-      <ResponsiveContainer width="100%" height={250}>
+        <ResponsiveContainer width="100%" height={300}>
 
+          <BarChart
+            data={suppliers}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 60,
+            }}
+          >
 
-        <BarChart data={suppliers}>
+            <CartesianGrid strokeDasharray="3 3" />
 
+            <XAxis
+              dataKey="name"
+              angle={-25}
+              textAnchor="end"
+              interval={0}
+            />
 
-          <XAxis dataKey="name" />
+            <YAxis />
 
+            <Tooltip />
 
-          <YAxis />
+            <Bar
+              dataKey="price"
+              radius={[8, 8, 0, 0]}
+            />
 
+          </BarChart>
 
-          <Tooltip />
+        </ResponsiveContainer>
 
+      ) : (
 
-          <Bar 
-            dataKey="price"
-            radius={[8,8,0,0]}
-          />
+        <p className="text-gray-500">
+          No supplier data available
+        </p>
 
-
-        </BarChart>
-
-
-      </ResponsiveContainer>
+      )}
 
 
     </div>
 
   );
+
 }

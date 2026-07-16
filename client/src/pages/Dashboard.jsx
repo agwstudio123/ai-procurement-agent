@@ -1,121 +1,195 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Header from "../components/Header";
 import StatsCard from "../components/StatsCard";
 import SupplierChart from "../components/SupplierChart";
 import SupplierTable from "../components/SupplierTable";
-import AIRecommendation from "../components/AIRecommendation";
+import AIReport from "../components/AIRecommendation";
 import BOQForm from "../components/BOQForm";
 
-
 export default function Dashboard() {
+  console.log("DASHBOARD PAGE FILE LOADED");
 
   const [result, setResult] = useState(null);
 
+  const [trustedSuppliers, setTrustedSuppliers] = useState(0);
+  const [activeProjects, setActiveProjects] = useState(0);
+  const [moneySaved, setMoneySaved] = useState(0);
+
+  const [walletConnected, setWalletConnected] = useState(false);
+
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [completedOrders, setCompletedOrders] = useState(0);
+  const [pendingOrders, setPendingOrders] = useState(0);
+  const [totalPaid, setTotalPaid] = useState(0);
+
+  useEffect(() => {
+    // ==========================
+    // Suppliers
+    // ==========================
+    fetch("http://localhost:3000/suppliers")
+      .then((response) => response.json())
+      .then((data) => {
+        const trusted = data.filter(
+          (supplier) => supplier.trusted === true
+        );
+
+        setTrustedSuppliers(trusted.length);
+      })
+      .catch((error) => {
+        console.log("SUPPLIER FETCH ERROR:", error);
+      });
+
+    // ==========================
+    // Orders
+    // ==========================
+    fetch("http://localhost:3000/orders")
+      .then((response) => response.json())
+      .then((data) => {
+        const contractor = JSON.parse(
+          localStorage.getItem("currentContractor")
+        );
+
+        let myOrders = data;
+
+        if (contractor) {
+          myOrders = data.filter(
+            (order) =>
+              Number(order.contractorId) ===
+              Number(contractor.id)
+          );
+        }
+
+        setTotalOrders(myOrders.length);
+
+        const completed = myOrders.filter(
+          (order) => order.status === "Completed"
+        );
+
+        const pending = myOrders.filter(
+          (order) => order.status === "Pending"
+        );
+
+        const active = myOrders.filter(
+          (order) => order.status !== "Completed"
+        );
+
+        setCompletedOrders(completed.length);
+        setPendingOrders(pending.length);
+        setActiveProjects(active.length);
+
+        const paid = myOrders
+          .filter(
+            (order) =>
+              order.paymentStatus === "Paid"
+          )
+          .reduce(
+            (sum, order) =>
+              sum +
+              Number(
+                order.totalAmount ||
+                order.amount ||
+                0
+              ),
+            0
+          );
+
+        setTotalPaid(paid);
+
+        const saved = myOrders.reduce(
+          (sum, order) =>
+            sum + Number(order.savings || 0),
+          0
+        );
+
+        setMoneySaved(saved);
+      })
+      .catch((error) => {
+        console.log("ORDER FETCH ERROR:", error);
+      });
+
+    // ==========================
+    // Wallet
+    // ==========================
+    const contractor = JSON.parse(
+      localStorage.getItem("currentContractor")
+    );
+
+    if (
+      contractor &&
+      contractor.wallet &&
+      contractor.wallet !== "Not Connected"
+    ) {
+      setWalletConnected(true);
+    } else {
+      setWalletConnected(false);
+    }
+  }, []);
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
-
-
-      
-
-
-      {/* Main Dashboard */}
       <main className="flex-1 p-8">
-
-
         <Header />
 
-
-
-        {/* Stats Cards */}
+        {/* Stats */}
         <div className="grid grid-cols-4 gap-6 mt-8">
 
-
           <StatsCard
-            title="Wallet Balance"
-            value="27 USDC"
+            title="Total Orders"
+            value={totalOrders}
             color="bg-blue-600"
           />
 
-
           <StatsCard
             title="Trusted Suppliers"
-            value="12"
+            value={trustedSuppliers}
             color="bg-green-600"
           />
 
-
           <StatsCard
             title="Active Projects"
-            value="8"
+            value={activeProjects}
             color="bg-purple-600"
           />
 
-
           <StatsCard
             title="Money Saved"
-            value="205 USDC"
+            value={`${moneySaved.toFixed(5)} USDC`}
             color="bg-orange-500"
           />
 
-
         </div>
 
-
-
-
-        {/* BOQ FORM */}
+        {/* BOQ */}
         <div className="mt-8">
-
-          <BOQForm 
-            onResult={(data)=>{
-              console.log("FROM BOQ TO DASHBOARD:", data);
+          <BOQForm
+            onResult={(data) => {
               setResult(data);
             }}
           />
-
         </div>
 
-
-
-
-
-        {/* Chart + AI Recommendation */}
+        {/* Chart + AI */}
         <div className="grid grid-cols-3 gap-6 mt-8">
-
-
           <div className="col-span-2">
-
             <SupplierChart />
-
           </div>
 
-
-
-          <AIRecommendation 
-            result={result}
+          <AIReport
+            totalOrders={totalOrders}
+            completedOrders={completedOrders}
+            pendingOrders={pendingOrders}
+            totalPaid={totalPaid}
+            trustedSuppliers={trustedSuppliers}
+            supplierResult={result}
           />
-
-
         </div>
 
-
-
-
-
-        {/* Supplier Comparison */}
+        {/* Supplier Table */}
         <div className="mt-8">
-
           <SupplierTable />
-
         </div>
-
-
-
       </main>
-
-
     </div>
   );
 }

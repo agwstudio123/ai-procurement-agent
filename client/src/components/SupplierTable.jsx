@@ -19,6 +19,12 @@ export default function SupplierTable() {
     }
 
     loadSuppliers();
+
+    const interval = setInterval(() => {
+      loadSuppliers();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -55,16 +61,20 @@ export default function SupplierTable() {
               return (
                 <tr
                   key={supplier.id}
-                  className="border-b"
+                  className="border-b hover:bg-gray-50 transition"
                 >
                   <td className="p-3 font-semibold">
                     {supplier.companyName}
                   </td>
 
                   <td className="p-3">
-                    {supplier.materials?.length > 0 ? (
+                    {supplier.materials &&
+                    supplier.materials.length > 0 ? (
                       supplier.materials.map((material) => (
-                        <div key={material.id}>
+                        <div
+                          key={material.id}
+                          className="mb-1"
+                        >
                           {material.name} — {material.price} USDC
                         </div>
                       ))

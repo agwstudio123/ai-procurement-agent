@@ -7,6 +7,12 @@ export default function SupplierOrders() {
 
   useEffect(() => {
     loadOrders();
+
+    const interval = setInterval(() => {
+      loadOrders();
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, []);
 
   async function loadOrders() {
@@ -26,8 +32,11 @@ export default function SupplierOrders() {
       const allOrders = await response.json();
 
       const supplierOrders = allOrders.filter(
-        (order) => order.supplierId === currentSupplier.id
-      );
+  (order) =>
+    order.supplierId === currentSupplier.id &&
+    order.status !== "Completed" &&
+    order.status !== "Rejected"
+);
 
       setOrders(supplierOrders);
     } catch (error) {
@@ -120,7 +129,13 @@ export default function SupplierOrders() {
                       {order.paymentStatus || "Unpaid"}
                     </strong>
                   </p>
-
+{order.transactionId && (
+  <p className="mt-2 text-sm break-all">
+    Transaction ID:
+    <br />
+    {order.transactionId}
+  </p>
+)}
                   <p className="mt-2 text-sm break-all">
                     Wallet:
                     <br />
@@ -128,7 +143,7 @@ export default function SupplierOrders() {
                   </p>
 
                   <p className="mt-2 text-gray-500">
-                    {order.createdAt}
+                    {new Date(order.createdAt).toLocaleString()}
                   </p>
                 </div>
 
@@ -138,8 +153,10 @@ export default function SupplierOrders() {
                       ? "bg-yellow-100 text-yellow-700"
                       : order.status === "Accepted"
                       ? "bg-blue-100 text-blue-700"
-                      : order.status === "Paid"
+                      : order.status === "Payment Secured"
                       ? "bg-green-100 text-green-700"
+                      : order.status === "Dispatched"
+                      ? "bg-indigo-100 text-indigo-700"
                       : order.status === "Delivered"
                       ? "bg-purple-100 text-purple-700"
                       : order.status === "Completed"
@@ -180,15 +197,56 @@ export default function SupplierOrders() {
                 </div>
               )}
 
-              {order.status === "Paid" && (
+              {order.status === "Payment Secured" && (
+                <div className="mt-4">
+                  <p className="text-green-600 font-bold mb-3">
+                    🔒 Payment Secured
+                  </p>
+
+                  <button
+                    onClick={() =>
+                      updateStatus(order.id, "Dispatched")
+                    }
+                    className="bg-blue-600 text-white px-5 py-2 rounded-lg"
+                  >
+                    🚚 Dispatch Materials
+                  </button>
+                </div>
+              )}
+
+              {order.status === "Dispatched" && (
                 <button
                   onClick={() =>
                     updateStatus(order.id, "Delivered")
                   }
-                  className="bg-blue-600 text-white px-5 py-2 rounded-lg mt-4"
+                  className="bg-green-600 text-white px-5 py-2 rounded-lg mt-4"
                 >
-                  🚚 Mark as Delivered
+                  📦 Mark as Delivered
                 </button>
+              )}
+
+              {order.status === "Delivered" && (
+                <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-300">
+                  <p className="font-semibold text-yellow-800">
+                    ⏳ Waiting for contractor confirmation.
+                  </p>
+
+                  <p className="text-sm text-yellow-700 mt-1">
+                    Payment is safely held in escrow and will be released after the contractor confirms delivery.
+                  </p>
+                </div>
+              )}
+
+              {order.status === "Completed" && (
+                <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-300">
+                  <p className="font-bold text-green-700">
+                    💰 Payment Released
+                  </p>
+
+                  <p className="text-sm text-green-600">
+                    Funds have been released to your wallet.
+                  </p>
+                </div>
               )}
             </div>
           ))}

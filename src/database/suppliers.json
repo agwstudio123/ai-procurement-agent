@@ -55,5 +55,126 @@
     "cementPrice": 0.5,
     "blockPrice": 1,
     "steelPrice": 1
+  },
+  {
+    "id": 1784064030972,
+    "companyName": "Pharst supplier",
+    "ownerName": "Fasasi ibrahim",
+    "email": "Pharst306@gmail.com",
+    "password": "Pharst supplier",
+    "location": "Abuja",
+    "categories": "Cement, block and steel",
+    "wallet": "0x55420672f8D0810B606EC0B1BA2D5693835Da602",
+    "trusted": true,
+    "trustScore": 95,
+    "materials": [
+      {
+        "id": 1784064369574,
+        "name": "Cement",
+        "category": "Cement",
+        "quantity": "100000",
+        "unit": "bag",
+        "price": "0.001",
+        "location": "abuja",
+        "wallet": "",
+        "supplierId": 1784064030972,
+        "supplierName": "Pharst supplier",
+        "status": "Available"
+      },
+      {
+        "id": 1784064395782,
+        "name": "Steel",
+        "category": "Steel",
+        "quantity": "5000",
+        "unit": "pieces",
+        "price": "3",
+        "location": "Abuja",
+        "wallet": "",
+        "supplierId": 1784064030972,
+        "supplierName": "Pharst supplier",
+        "status": "Available"
+      },
+      {
+        "id": 1784064417165,
+        "name": "Blocks",
+        "category": "Block",
+        "quantity": "3000",
+        "unit": "pieces",
+        "price": "1",
+        "location": "Abuja",
+        "wallet": "",
+        "supplierId": 1784064030972,
+        "supplierName": "Pharst supplier",
+        "status": "Available"
+      }
+    ],
+    "activeOrders": 0,
+    "completedOrders": 0,
+    "earnings": 0,
+    "createdAt": "7/14/2026, 10:20:30 PM",
+    "cementPrice": 0.001,
+    "steelPrice": 3,
+    "blockPrice": 1
+  },
+  
+  {
+    "id": 1784101575778,
+    "companyName": "TRUST SUPPLIER LIMITED",
+    "ownerName": "TOLA ANIKULAPO",
+    "email": "TRUSTSUPPLIER@GMAIL.COM",
+    "password": "TRUST SUPPLIER LIMITED",
+    "location": "kano",
+    "categories": "Cement, block and steel",
+    "wallet": "0x55420672f8D0810B606EC0B1BA2D5693835Da602",
+    "trusted": true,
+    "trustScore": 95,
+    "materials": [
+      {
+        "id": 1784101596903,
+        "name": "Cement",
+        "category": "Cement",
+        "quantity": "3000",
+        "unit": "bag",
+        "price": "0.00001",
+        "location": "Abuja",
+        "wallet": "",
+        "supplierId": 1784101575778,
+        "supplierName": "TRUST SUPPLIER LIMITED",
+        "status": "Available"
+      },
+      {
+        "id": 1784101620478,
+        "name": "Steel",
+        "category": "Steel",
+        "quantity": "3000",
+        "unit": "pieces",
+        "price": "0.0001",
+        "location": "Abuja",
+        "wallet": "",
+        "supplierId": 1784101575778,
+        "supplierName": "TRUST SUPPLIER LIMITED",
+        "status": "Available"
+      },
+      {
+        "id": 1784101635294,
+        "name": "Blocks",
+        "category": "Block",
+        "quantity": "100000",
+        "unit": "pieces",
+        "price": "0.001",
+        "location": "abuja",
+        "wallet": "",
+        "supplierId": 1784101575778,
+        "supplierName": "TRUST SUPPLIER LIMITED",
+        "status": "Available"
+      }
+    ],
+    "activeOrders": 0,
+    "completedOrders": 0,
+    "earnings": 0,
+    "createdAt": "7/15/2026, 8:46:15 AM",
+    "cementPrice": 0.00001,
+    "steelPrice": 0.0001,
+    "blockPrice": 0.001
   }
 ]

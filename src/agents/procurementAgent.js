@@ -55,10 +55,18 @@ function chooseBestSupplier(boq, suppliers) {
     }
   });
 
-  return {
-    bestSupplier,
-    supplierResults,
-  };
+  const marketPrice = Math.max(
+  ...supplierResults.map(
+    supplier => supplier.totalCost
+  )
+);
+
+
+return {
+  bestSupplier,
+  supplierResults,
+  marketPrice,
+};
 }
 
 export default chooseBestSupplier;

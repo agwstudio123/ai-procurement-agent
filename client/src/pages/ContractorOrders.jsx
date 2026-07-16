@@ -6,73 +6,102 @@ export default function ContractorOrders() {
   const [orders, setOrders] = useState([]);
 
 
-  function loadOrders() {
+  async function loadOrders() {
 
     const contractor = JSON.parse(
       localStorage.getItem("currentContractor")
     );
 
-
     if (!contractor) return;
 
 
-    const allOrders =
-      JSON.parse(localStorage.getItem("orders")) || [];
+    try {
+
+      const response = await fetch(
+        "http://localhost:3000/orders"
+      );
+
+      const allOrders = await response.json();
 
 
-    setOrders(
-      allOrders.filter(
-        (order) =>
-          order.contractorId === contractor.id
-      )
-    );
+      setOrders(
+        allOrders.filter(
+          (order) =>
+            Number(order.contractorId) ===
+            Number(contractor.id)
+        )
+      );
+
+
+    } catch (error) {
+
+      console.log(
+        "Failed to load orders:",
+        error
+      );
+
+    }
 
   }
 
 
 
   useEffect(() => {
+
+  loadOrders();
+
+  const interval = setInterval(() => {
     loadOrders();
-  }, []);
+  }, 3000);
+
+
+  return () => clearInterval(interval);
+
+}, []);
 
 
 
 
-  function paySupplier(orderId) {
+
+  async function paySupplier(orderId) {
+
+    try {
+
+      const response = await fetch(
+        `http://localhost:3000/orders/${orderId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: "Payment Secured",
+            paymentStatus: "Escrowed",
+          })
+        }
+      );
 
 
-    const allOrders =
-      JSON.parse(localStorage.getItem("orders")) || [];
+      const data = await response.json();
 
 
+      if (!data.success) {
 
-    const updatedOrders = allOrders.map((order) => {
-
-
-      if(order.id === orderId){
-
-        return {
-          ...order,
-          status:"Paid",
-          paymentStatus:"Paid",
-        };
+        alert("Payment failed");
+        return;
 
       }
 
 
-      return order;
-
-    });
+      loadOrders();
 
 
+    } catch (error) {
 
-    localStorage.setItem(
-      "orders",
-      JSON.stringify(updatedOrders)
-    );
+      console.log(error);
+      alert("Backend connection failed");
 
-
-    loadOrders();
+    }
 
   }
 
@@ -80,43 +109,51 @@ export default function ContractorOrders() {
 
 
 
-  function confirmDelivery(orderId) {
 
 
-    const allOrders =
-      JSON.parse(localStorage.getItem("orders")) || [];
+  async function confirmDelivery(orderId) {
+
+    try {
+
+      const response = await fetch(
+        `http://localhost:3000/orders/${orderId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: "Completed",
+            paymentStatus: "Paid",
+          }),
+        }
+      );
 
 
+      const data = await response.json();
 
-    const updatedOrders = allOrders.map((order)=>{
 
+      if (!data.success) {
 
-      if(order.id === orderId){
-
-        return {
-          ...order,
-          status:"Completed",
-        };
+        alert("Failed to complete order");
+        return;
 
       }
 
 
-      return order;
-
-    });
+      loadOrders();
 
 
+    } catch (error) {
 
-    localStorage.setItem(
-      "orders",
-      JSON.stringify(updatedOrders)
-    );
+      console.log(error);
+      alert("Backend connection failed");
 
-
-
-    loadOrders();
+    }
 
   }
+
+
 
 
 
@@ -128,8 +165,8 @@ export default function ContractorOrders() {
 
 
       <h1 className="text-3xl font-bold">
-        🏗 My Procurement Orders
-      </h1>
+  🏗 My Procurement Orders
+</h1>
 
 
       <p className="text-gray-600 mt-2">
@@ -190,6 +227,7 @@ export default function ContractorOrders() {
 
 
 
+
                   <p className="mt-2">
                     Payment:
                     <strong>
@@ -198,6 +236,15 @@ export default function ContractorOrders() {
                     </strong>
                   </p>
 
+
+
+                  {order.transactionId && (
+                    <p className="mt-2 text-sm break-all">
+                      Transaction ID:
+                      <br />
+                      {order.transactionId}
+                    </p>
+                  )}
 
 
 
@@ -222,8 +269,6 @@ export default function ContractorOrders() {
 
 
 
-              {/* CHAT */}
-
               <Link
 
                 to={`/chat/${order.id}`}
@@ -240,8 +285,6 @@ export default function ContractorOrders() {
 
 
 
-
-              {/* PAYMENT */}
 
 
               {order.status === "Accepted" &&
@@ -267,9 +310,6 @@ export default function ContractorOrders() {
 
 
 
-
-
-              {/* DELIVERY CONFIRMATION */}
 
 
               {order.status === "Delivered" && (
@@ -305,6 +345,8 @@ export default function ContractorOrders() {
                 </p>
 
               )}
+
+
 
 
 

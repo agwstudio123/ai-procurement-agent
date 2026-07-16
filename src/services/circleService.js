@@ -17,6 +17,9 @@ export async function sendUSDC(destinationAddress, amount) {
     const cleanAmount = Number(amount).toFixed(6);
 
     console.log("Sending USDC:", cleanAmount);
+    console.log("Destination:", destinationAddress);
+    console.log("Wallet ID:", process.env.WALLET_A_ID);
+    console.log("Token ID:", process.env.USDC_TOKEN_ID);
 
     const entitySecretCiphertext =
       await client.generateEntitySecretCiphertext();
@@ -32,7 +35,7 @@ export async function sendUSDC(destinationAddress, amount) {
         feeLevel: "MEDIUM",
       });
 
-    console.log("Transfer created:");
+    console.log("========== PAYMENT SUCCESS ==========");
     console.log(response.data);
 
     return response.data.data;
@@ -40,7 +43,14 @@ export async function sendUSDC(destinationAddress, amount) {
   } catch (error) {
 
     console.error("========== PAYMENT ERROR ==========");
-    console.error(error.response?.data || error.message);
+
+    if (error.response) {
+      console.log(
+        JSON.stringify(error.response.data, null, 2)
+      );
+    } else {
+      console.log(error.message);
+    }
 
     throw error;
   }
@@ -60,8 +70,15 @@ export async function checkUSDCBalance() {
 
   } catch (error) {
 
-    console.error("BALANCE ERROR");
-    console.error(error.response?.data || error.message);
+    console.error("========== BALANCE ERROR ==========");
+
+    if (error.response) {
+      console.log(
+        JSON.stringify(error.response.data, null, 2)
+      );
+    } else {
+      console.log(error.message);
+    }
 
     throw error;
   }
@@ -95,8 +112,15 @@ export async function getTransactionStatus(transactionId) {
 
   } catch (error) {
 
-    console.error("STATUS ERROR");
-    console.error(error.response?.data || error.message);
+    console.error("========== STATUS ERROR ==========");
+
+    if (error.response) {
+      console.log(
+        JSON.stringify(error.response.data, null, 2)
+      );
+    } else {
+      console.log(error.message);
+    }
 
     throw error;
 
