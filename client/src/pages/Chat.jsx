@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { API_URL } from "../api";
 
 export default function Chat() {
 
@@ -9,7 +10,6 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [deliveryFee, setDeliveryFee] = useState("");
-
 
 
   useEffect(() => {
@@ -27,14 +27,12 @@ export default function Chat() {
 
 
 
-
-
   async function loadChat() {
 
     try {
 
       const orderResponse = await fetch(
-        "http://localhost:3000/orders"
+        `${API_URL}/orders`
       );
 
 
@@ -52,7 +50,7 @@ export default function Chat() {
 
 
       const chatResponse = await fetch(
-        `http://localhost:3000/chats/${orderId}`
+        `${API_URL}/chats/${orderId}`
       );
 
 
@@ -76,15 +74,13 @@ export default function Chat() {
 
 
 
-
-
   async function saveMessage(newMessage) {
 
     try {
 
 
       await fetch(
-        `http://localhost:3000/chats/${orderId}`,
+        `${API_URL}/chats/${orderId}`,
         {
 
           method:"POST",
@@ -114,8 +110,6 @@ export default function Chat() {
     }
 
   }
-
-
 
 
 
@@ -166,29 +160,25 @@ export default function Chat() {
 
 
 
-
     await saveMessage({
 
-  sender: userType,
-  senderRole: userType,
+      sender: userType,
+      senderRole: userType,
 
-  name,
+      name,
 
-  text: message,
+      text: message,
 
-  type: "text",
+      type: "text",
 
-  time: new Date().toLocaleTimeString()
+      time: new Date().toLocaleTimeString()
 
-});
+    });
 
 
     setMessage("");
 
   }
-
-
-
 
 
 
@@ -208,28 +198,27 @@ export default function Chat() {
 
     await saveMessage({
 
-  sender: "supplier",
+      sender: "supplier",
 
-  senderRole: "supplier",
+      senderRole: "supplier",
 
-  name: supplier?.companyName || "Supplier",
+      name: supplier?.companyName || "Supplier",
 
-  text: `Delivery fee proposal: ${deliveryFee} USDC`,
+      text: `Delivery fee proposal: ${deliveryFee} USDC`,
 
-  amount: Number(deliveryFee),
+      amount: Number(deliveryFee),
 
-  type: "delivery_fee",
+      type: "delivery_fee",
 
-  time: new Date().toLocaleTimeString()
+      time: new Date().toLocaleTimeString()
 
-});
+    });
 
 
 
     setDeliveryFee("");
 
   }
-
 
 
 
@@ -250,10 +239,6 @@ export default function Chat() {
 
 
 
-
-
-
-
   return (
 
     <div className="min-h-screen bg-gray-100 p-10">
@@ -262,14 +247,11 @@ export default function Chat() {
       <div className="bg-white rounded-xl shadow p-6">
 
 
-
         <h1 className="text-3xl font-bold">
 
           💬 Order Chat
 
         </h1>
-
-
 
 
 
@@ -316,9 +298,6 @@ export default function Chat() {
 
 
 
-
-
-
         <div className="mt-6 space-y-4">
 
 
@@ -348,7 +327,6 @@ export default function Chat() {
             >
 
 
-
               <p className="font-bold">
 
                 {msg.name || msg.sender}
@@ -362,7 +340,6 @@ export default function Chat() {
                 {msg.text}
 
               </p>
-
 
 
 
@@ -382,13 +359,11 @@ export default function Chat() {
 
 
 
-
               <p className="text-xs text-gray-500">
 
                 {msg.time}
 
               </p>
-
 
 
             </div>
@@ -401,9 +376,6 @@ export default function Chat() {
 
 
         </div>
-
-
-
 
 
 
@@ -445,10 +417,6 @@ export default function Chat() {
 
 
 
-
-
-
-
         {
         localStorage.getItem("userType")==="supplier" &&
 
@@ -461,7 +429,6 @@ export default function Chat() {
             🚚 Add Delivery Cost
 
           </h3>
-
 
 
 
@@ -478,7 +445,6 @@ export default function Chat() {
             className="border rounded-lg p-3 w-full"
 
           />
-
 
 
 
