@@ -509,6 +509,119 @@ app.put("/contractors/:id/wallet", (req, res) => {
 });
 
 // ===============================
+// CONTRACTORS
+// ===============================
+
+// Register Contractor
+app.post("/contractors/register", (req, res) => {
+
+  const contractors = getContractors();
+
+  const {
+    companyName,
+    ownerName,
+    email,
+    password,
+    location,
+    wallet,
+  } = req.body;
+
+  const existing = contractors.find(
+    contractor =>
+      contractor.email.toLowerCase() === email.toLowerCase()
+  );
+
+  if (existing) {
+    return res.json({
+      success: false,
+      message: "Email already exists.",
+    });
+  }
+
+  const newContractor = {
+    id: Date.now(),
+    companyName,
+    ownerName,
+    email,
+    password,
+    location,
+    wallet: wallet || "",
+    trustScore: 95,
+  };
+
+  contractors.push(newContractor);
+
+  saveContractors(contractors);
+
+  res.json({
+    success: true,
+    contractor: newContractor,
+  });
+
+});
+
+
+// Get all contractors
+app.get("/contractors", (req, res) => {
+
+  res.json(getContractors());
+
+});
+
+
+// Get contractor by ID
+app.get("/contractors/:id", (req, res) => {
+
+  const contractors = getContractors();
+
+  const contractor = contractors.find(
+    contractor => Number(contractor.id) === Number(req.params.id)
+  );
+
+  if (!contractor) {
+    return res.json({
+      success: false,
+      message: "Contractor not found",
+    });
+  }
+
+  res.json(contractor);
+
+});
+
+
+// Update contractor
+app.put("/contractors/:id", (req, res) => {
+
+  const contractors = getContractors();
+
+  const index = contractors.findIndex(
+    contractor => Number(contractor.id) === Number(req.params.id)
+  );
+
+  if (index === -1) {
+    return res.json({
+      success: false,
+      message: "Contractor not found",
+    });
+  }
+
+  contractors[index] = {
+    ...contractors[index],
+    ...req.body,
+    id: contractors[index].id,
+  };
+
+  saveContractors(contractors);
+
+  res.json({
+    success: true,
+    contractor: contractors[index],
+  });
+
+});
+
+// ===============================
 // TRUSTED SUPPLIERS
 // ===============================
 

@@ -48,13 +48,22 @@ function History() {
         const response = await fetch(`${API_URL}/orders`);
         const data = await response.json();
 
-        setOrders(
-          data.filter(
-            (order) =>
-              order.status === "Completed" &&
-              order.paymentStatus === "Paid"
-          )
-        );
+        const contractor = JSON.parse(
+  localStorage.getItem("currentContractor")
+);
+
+const myOrders = data.filter(
+  (order) =>
+    Number(order.contractorId) === Number(contractor?.id)
+);
+
+setOrders(
+  myOrders.filter(
+    (order) =>
+      order.status === "Completed" &&
+      order.paymentStatus === "Paid"
+  )
+);
       } catch (error) {
         console.log("Failed to load orders:", error);
       }
@@ -117,7 +126,21 @@ function Payments() {
         const response = await fetch(`${API_URL}/orders`);
         const data = await response.json();
 
-        setPayments(data.filter((order) => order.paymentStatus === "Paid"));
+        const contractor = JSON.parse(
+  localStorage.getItem("currentContractor")
+);
+
+const myPayments = data.filter(
+  (order) =>
+    Number(order.contractorId) === Number(contractor?.id)
+);
+
+setPayments(
+  myPayments.filter(
+    (order) =>
+      order.paymentStatus === "Paid"
+  )
+);
       } catch (error) {
         console.log("Failed to load payments:", error);
       }
@@ -194,7 +217,18 @@ function Analytics() {
       try {
         const ordersResponse = await fetch(`${API_URL}/orders`);
         const ordersData = await ordersResponse.json();
-        setOrders(ordersData);
+        const contractor = JSON.parse(
+  localStorage.getItem("currentContractor")
+);
+
+const myOrders = ordersData.filter(
+  (order) =>
+    Number(order.contractorId) === Number(contractor?.id)
+);
+setOrders(myOrders);
+console.log("Logged Contractor ID:", contractor?.id);
+console.log("All Orders:", ordersData);
+console.log("Filtered Orders:", myOrders);
 
         const suppliersResponse = await fetch(`${API_URL}/trusted-suppliers`);
         const suppliersData = await suppliersResponse.json();
@@ -339,7 +373,10 @@ function Settings() {
 
   const contractor =
     JSON.parse(localStorage.getItem("currentContractor")) || {};
-
+const walletConnected =
+  contractor &&
+  contractor.wallet &&
+  contractor.wallet !== "Not Connected";
   const [wallet, setWallet] = React.useState(
     contractor.wallet || ""
   );
@@ -439,9 +476,15 @@ function Settings() {
         <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-6">
           <div className="flex justify-between items-center">
             <p className="text-sm text-gray-500">Connected Wallet</p>
-            <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">
-              Active
-            </span>
+            {walletConnected ? (
+  <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">
+    Connected
+  </span>
+) : (
+  <span className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded-full">
+    Not Connected
+  </span>
+)}
           </div>
 
           <p className="font-mono mt-3 break-all text-sm">
