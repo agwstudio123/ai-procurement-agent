@@ -108,6 +108,9 @@ app.get("/suppliers", (req, res) => {
 
 app.post("/suppliers", (req, res) => {
 
+  console.log("NEW SUPPLIER RECEIVED:");
+  console.log(req.body);
+
   const suppliers = getSuppliers();
 
   suppliers.push(req.body);
