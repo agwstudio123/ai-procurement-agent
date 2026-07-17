@@ -9,8 +9,6 @@ import AIReport from "../components/AIRecommendation";
 import BOQForm from "../components/BOQForm";
 
 export default function Dashboard() {
-  console.log("DASHBOARD PAGE FILE LOADED");
-
   const [result, setResult] = useState(null);
 
   const [trustedSuppliers, setTrustedSuppliers] = useState(0);
@@ -25,9 +23,7 @@ export default function Dashboard() {
   const [totalPaid, setTotalPaid] = useState(0);
 
   useEffect(() => {
-    // ==========================
-    // Suppliers
-    // ==========================
+    // Load suppliers
     fetch(`${API_URL}/suppliers`)
       .then((response) => response.json())
       .then((data) => {
@@ -36,14 +32,9 @@ export default function Dashboard() {
         );
 
         setTrustedSuppliers(trusted.length);
-      })
-      .catch((error) => {
-        console.log("SUPPLIER FETCH ERROR:", error);
       });
 
-    // ==========================
-    // Orders
-    // ==========================
+    // Load orders
     fetch(`${API_URL}/orders`)
       .then((response) => response.json())
       .then((data) => {
@@ -81,8 +72,7 @@ export default function Dashboard() {
 
         const paid = myOrders
           .filter(
-            (order) =>
-              order.paymentStatus === "Paid"
+            (order) => order.paymentStatus === "Paid"
           )
           .reduce(
             (sum, order) =>
@@ -104,14 +94,9 @@ export default function Dashboard() {
         );
 
         setMoneySaved(saved);
-      })
-      .catch((error) => {
-        console.log("ORDER FETCH ERROR:", error);
       });
 
-    // ==========================
     // Wallet
-    // ==========================
     const contractor = JSON.parse(
       localStorage.getItem("currentContractor")
     );
@@ -128,11 +113,14 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
-      <main className="flex-1 p-8">
+    <div className="bg-gray-100 min-h-screen">
+      <main className="w-full p-4 md:p-8">
+
         <Header />
 
-        <div className="grid grid-cols-4 gap-6 mt-8">
+        {/* Statistics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
+
           <StatsCard
             title="Total Orders"
             value={totalOrders}
@@ -156,21 +144,23 @@ export default function Dashboard() {
             value={`${moneySaved.toFixed(5)} USDC`}
             color="bg-orange-500"
           />
+
         </div>
 
+        {/* BOQ Form */}
         <div className="mt-8">
           <BOQForm
-            onResult={(data) => {
-              setResult(data);
-            }}
+            onResult={(data) => setResult(data)}
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-6 mt-8">
-          <div className="col-span-2">
-            <SupplierChart />
-          </div>
+        {/* Supplier Cost Chart */}
+        <div className="mt-8">
+          <SupplierChart />
+        </div>
 
+        {/* AI Procurement Report - Full Width */}
+        <div className="mt-8">
           <AIReport
             totalOrders={totalOrders}
             completedOrders={completedOrders}
@@ -181,9 +171,11 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="mt-8">
+        {/* Supplier Comparison Table */}
+        <div className="mt-8 mb-10">
           <SupplierTable />
         </div>
+
       </main>
     </div>
   );

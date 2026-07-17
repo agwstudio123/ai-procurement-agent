@@ -36,6 +36,21 @@ export default function SupplierChart() {
       .catch(console.log);
   }, []);
 
+  const lowestPrice =
+    suppliers.length > 0
+      ? Math.min(...suppliers.map((s) => s.price))
+      : 0;
+
+  const averagePrice =
+    suppliers.length > 0
+      ? (
+          suppliers.reduce(
+            (sum, s) => sum + s.price,
+            0
+          ) / suppliers.length
+        ).toFixed(3)
+      : 0;
+
   return (
     <div className="bg-white rounded-2xl shadow p-6">
 
@@ -43,7 +58,7 @@ export default function SupplierChart() {
         Supplier Cost Comparison
       </h2>
 
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={320}>
         <BarChart
           data={suppliers}
           margin={{
@@ -73,46 +88,115 @@ export default function SupplierChart() {
         </BarChart>
       </ResponsiveContainer>
 
-      {/* DASHBOARD SUMMARY */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+      {/* MARKET ANALYTICS */}
+      <div className="grid lg:grid-cols-3 gap-6 mt-8">
 
-        <div className="bg-slate-100 rounded-xl p-4 text-center">
-          <p className="text-gray-500 text-sm">Suppliers</p>
-          <h3 className="text-3xl font-bold">
-            {suppliers.length}
-          </h3>
+        {/* LEFT */}
+        <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+
+          <div className="bg-slate-100 rounded-xl p-5 text-center shadow-sm">
+            <p className="text-gray-500 text-sm">
+              Suppliers
+            </p>
+
+            <h3 className="text-3xl font-bold text-slate-800 mt-2">
+              {suppliers.length}
+            </h3>
+          </div>
+
+          <div className="bg-green-100 rounded-xl p-5 text-center shadow-sm">
+            <p className="text-gray-500 text-sm">
+              Lowest Cement Price
+            </p>
+
+            <h3 className="text-3xl font-bold text-green-700 mt-2">
+              {lowestPrice} USDC
+            </h3>
+          </div>
+
+          <div className="bg-blue-100 rounded-xl p-5 text-center shadow-sm">
+            <p className="text-gray-500 text-sm">
+              Average Price
+            </p>
+
+            <h3 className="text-3xl font-bold text-blue-700 mt-2">
+              {averagePrice} USDC
+            </h3>
+          </div>
+
+          <div className="bg-yellow-100 rounded-xl p-5 text-center shadow-sm">
+            <p className="text-gray-500 text-sm">
+              Competition
+            </p>
+
+            <h3 className="text-3xl font-bold text-yellow-700 mt-2">
+              {suppliers.length > 3 ? "High" : "Medium"}
+            </h3>
+          </div>
+
         </div>
 
-        <div className="bg-green-100 rounded-xl p-4 text-center">
-          <p className="text-gray-500 text-sm">Lowest Cement Price</p>
-          <h3 className="text-2xl font-bold">
-            {suppliers.length
-              ? Math.min(...suppliers.map((s) => s.price))
-              : 0}{" "}
-            USDC
-          </h3>
-        </div>
+        {/* RIGHT */}
+        <div className="rounded-xl p-6 bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg">
 
-        <div className="bg-blue-100 rounded-xl p-4 text-center">
-          <p className="text-gray-500 text-sm">Average Price</p>
-          <h3 className="text-2xl font-bold">
-            {suppliers.length
-              ? (
-                  suppliers.reduce(
-                    (sum, s) => sum + s.price,
-                    0
-                  ) / suppliers.length
-                ).toFixed(3)
-              : 0}{" "}
-            USDC
+          <h3 className="text-2xl font-bold mb-5">
+            📈 Market Insights
           </h3>
-        </div>
 
-        <div className="bg-yellow-100 rounded-xl p-4 text-center">
-          <p className="text-gray-500 text-sm">Competition</p>
-          <h3 className="text-2xl font-bold">
-            {suppliers.length > 3 ? "High" : "Medium"}
-          </h3>
+          <div className="space-y-4">
+
+            <div>
+              <p className="text-blue-200 text-sm">
+                Active Suppliers
+              </p>
+
+              <p className="text-2xl font-bold">
+                {suppliers.length}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-blue-200 text-sm">
+                Lowest Market Price
+              </p>
+
+              <p className="text-xl font-bold">
+                {lowestPrice} USDC
+              </p>
+            </div>
+
+            <div>
+              <p className="text-blue-200 text-sm">
+                Average Price
+              </p>
+
+              <p className="text-xl font-bold">
+                {averagePrice} USDC
+              </p>
+            </div>
+
+            <div>
+              <p className="text-blue-200 text-sm">
+                AI Recommendation
+              </p>
+
+              <p className="leading-7">
+                Compare quotations from multiple
+                verified suppliers before placing
+                procurement orders. Current market
+                competition is
+                <strong>
+                  {" "}
+                  {suppliers.length > 3
+                    ? "High"
+                    : "Medium"}
+                </strong>
+                , giving contractors better pricing opportunities.
+              </p>
+            </div>
+
+          </div>
+
         </div>
 
       </div>

@@ -10,7 +10,6 @@ import { API_URL } from "../api";
 
 
 export default function Dashboard() {
-  console.log("DASHBOARD LOADED");
 
   const [result, setResult] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -22,17 +21,13 @@ export default function Dashboard() {
 
     fetch(`${API_URL}/orders`)
       .then((res) => res.json())
-      .then((data) => {
-        setOrders(data);
-      })
+      .then((data) => setOrders(data))
       .catch((err) => console.log(err));
 
 
     fetch(`${API_URL}/suppliers`)
       .then((res) => res.json())
-      .then((data) => {
-        setSuppliers(data);
-      })
+      .then((data) => setSuppliers(data))
       .catch((err) => console.log(err));
 
 
@@ -45,12 +40,10 @@ export default function Dashboard() {
       setContractor(savedContractor);
     }
 
-
   }, []);
 
 
   const totalOrders = orders.length;
-
 
   const completedOrders = orders.filter(
     (order) => order.status === "Completed"
@@ -84,7 +77,8 @@ export default function Dashboard() {
         order.paymentStatus === "Paid"
     )
     .reduce(
-      (sum, order) => sum + Number(order.savings || 0),
+      (sum, order) =>
+        sum + Number(order.savings || 0),
       0
     );
 
@@ -98,12 +92,25 @@ export default function Dashboard() {
 
 
   return (
-    <div className="p-8">
+
+    <div className="p-4 md:p-8 w-full overflow-x-hidden">
+
 
       <Header />
 
 
-      <div className="grid grid-cols-4 gap-6 mt-8">
+      {/* Stats */}
+
+      <div className="
+        grid 
+        grid-cols-1 
+        sm:grid-cols-2 
+        xl:grid-cols-4 
+        gap-4 
+        md:gap-6 
+        mt-6
+      ">
+
 
         <StatsCard
           title="Wallet"
@@ -136,13 +143,17 @@ export default function Dashboard() {
           color="bg-orange-500"
         />
 
+
       </div>
 
 
-      <div className="mt-8">
+
+      {/* BOQ */}
+
+      <div className="mt-6 md:mt-8">
 
         <BOQForm
-          onResult={(data) => {
+          onResult={(data)=>{
             setResult(data);
           }}
         />
@@ -150,7 +161,10 @@ export default function Dashboard() {
       </div>
 
 
-      <div className="mt-8">
+
+      {/* AI Report */}
+
+      <div className="mt-6 md:mt-8">
 
         <AIReport
           totalOrders={totalOrders}
@@ -164,21 +178,42 @@ export default function Dashboard() {
       </div>
 
 
-      <div className="mt-8">
+
+      {/* Selected Supplier */}
+
+      <div className="mt-6 md:mt-8">
+
 
         {result?.supplier && (
 
-          <div className="bg-white rounded-xl shadow p-6">
+          <div className="
+            bg-white 
+            rounded-xl 
+            shadow 
+            p-4 
+            md:p-6
+          ">
 
-            <h2 className="text-2xl font-bold mb-4">
+
+            <h2 className="
+              text-xl 
+              md:text-2xl 
+              font-bold 
+              mb-4
+            ">
+
               🤖 AI Selected Supplier
+
             </h2>
 
 
-            <div className="space-y-2">
+
+            <div className="space-y-3 text-sm md:text-base">
+
 
               <p>
-                <strong>Supplier:</strong> {result.supplier.name}
+                <strong>Supplier:</strong>{" "}
+                {result.supplier.name}
               </p>
 
 
@@ -201,7 +236,9 @@ export default function Dashboard() {
                   : "Unverified"}
               </p>
 
+
             </div>
+
 
           </div>
 
@@ -210,11 +247,19 @@ export default function Dashboard() {
       </div>
 
 
-      <div className="mt-8">
+
+      {/* Suppliers */}
+
+      <div className="mt-6 md:mt-8 overflow-x-auto">
+
         <SupplierTable />
+
       </div>
 
 
+
     </div>
+
   );
+
 }

@@ -5,169 +5,147 @@ export default function SupplierTable() {
   const [suppliers, setSuppliers] = useState([]);
 
   useEffect(() => {
-
     async function loadSuppliers() {
-
       try {
-
-        const response = await fetch(
-          `${API_URL}/suppliers`
-        );
-
+        const response = await fetch(`${API_URL}/suppliers`);
         const data = await response.json();
-
         setSuppliers(data);
-
       } catch (error) {
-
         console.error("Failed to load suppliers:", error);
-
       }
-
     }
-
 
     loadSuppliers();
 
-
-    const interval = setInterval(() => {
-      loadSuppliers();
-    }, 5000);
-
+    const interval = setInterval(loadSuppliers, 5000);
 
     return () => clearInterval(interval);
-
   }, []);
 
-
   return (
-    <div className="bg-white rounded-2xl shadow p-6 mt-8">
+    <div className="bg-white rounded-2xl shadow p-6 mt-4">
 
       <h2 className="text-xl font-bold text-slate-800 mb-6">
         Supplier Comparison
       </h2>
 
+      <div className="overflow-x-auto">
 
-      <table className="w-full">
+        <table className="w-full min-w-[700px]">
 
-        <thead>
+          <thead>
 
-          <tr className="text-left border-b">
+            <tr className="text-left border-b bg-slate-100">
 
-            <th className="p-3">Supplier</th>
+              <th className="p-3">Supplier</th>
 
-            <th className="p-3">Materials / Prices</th>
+              <th className="p-3">Materials / Prices</th>
 
-            <th className="p-3">Status</th>
+              <th className="p-3">Status</th>
 
-            <th className="p-3">Wallet</th>
-
-          </tr>
-
-        </thead>
-
-
-        <tbody>
-
-          {suppliers.length === 0 ? (
-
-            <tr>
-
-              <td
-                colSpan="4"
-                className="p-6 text-center text-gray-500"
-              >
-                No suppliers have registered yet.
-              </td>
+              <th className="p-3">Wallet</th>
 
             </tr>
 
-          ) : (
+          </thead>
 
-            suppliers.map((supplier) => {
+          <tbody>
 
-              const wallet =
-                supplier.wallet || "Not Connected";
+            {suppliers.length === 0 ? (
 
+              <tr>
 
-              return (
-
-                <tr
-                  key={supplier.id}
-                  className="border-b hover:bg-gray-50 transition"
+                <td
+                  colSpan="4"
+                  className="text-center p-6 text-gray-500"
                 >
+                  No suppliers have registered yet.
+                </td>
 
-                  <td className="p-3 font-semibold">
-                    {supplier.companyName}
-                  </td>
+              </tr>
 
+            ) : (
 
-                  <td className="p-3">
+              suppliers.map((supplier) => {
 
-                    {supplier.materials &&
-                    supplier.materials.length > 0 ? (
+                const wallet =
+                  supplier.wallet || "Not Connected";
 
-                      supplier.materials.map((material) => (
+                return (
 
-                        <div
-                          key={material.id}
-                          className="mb-1"
-                        >
-                          {material.name} — {material.price} USDC
-                        </div>
+                  <tr
+                    key={supplier.id}
+                    className="border-b hover:bg-slate-50 transition"
+                  >
 
-                      ))
+                    <td className="p-3 font-semibold">
+                      {supplier.companyName}
+                    </td>
 
-                    ) : (
+                    <td className="p-3">
 
-                      <span className="text-gray-500">
-                        No materials yet
-                      </span>
+                      {supplier.materials?.length ? (
 
-                    )}
+                        supplier.materials.map((material) => (
 
-                  </td>
+                          <div
+                            key={material.id}
+                            className="mb-1"
+                          >
+                            {material.name} — {material.price} USDC
+                          </div>
 
+                        ))
 
-                  <td className="p-3">
+                      ) : (
 
-                    {supplier.trusted ? (
+                        <span className="text-gray-500">
+                          No materials yet
+                        </span>
 
-                      <span className="text-green-600 font-semibold">
-                        Trusted ✅
-                      </span>
+                      )}
 
-                    ) : (
+                    </td>
 
-                      <span className="text-red-500">
-                        Not Verified
-                      </span>
+                    <td className="p-3">
 
-                    )}
+                      {supplier.trusted ? (
 
-                  </td>
+                        <span className="text-green-600 font-semibold">
+                          Trusted ✅
+                        </span>
 
+                      ) : (
 
-                  <td className="p-3 text-xs">
+                        <span className="text-red-500">
+                          Not Verified
+                        </span>
 
-                    {wallet.length > 12
-                      ? `${wallet.slice(0, 10)}...`
-                      : wallet}
+                      )}
 
-                  </td>
+                    </td>
 
+                    <td className="p-3 text-xs">
 
-                </tr>
+                      {wallet.length > 12
+                        ? `${wallet.slice(0, 10)}...`
+                        : wallet}
 
-              );
+                    </td>
 
-            })
+                  </tr>
 
-          )}
+                );
 
-        </tbody>
+              })
 
-      </table>
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
 
     </div>
   );
