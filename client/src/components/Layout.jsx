@@ -1,11 +1,10 @@
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
 import background from "../assets/background.png";
-import AIAssistant from "./AIAssistant";
 
 export default function Layout() {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen">
 
       <Sidebar />
 
@@ -19,14 +18,8 @@ export default function Layout() {
           minHeight: "100vh",
         }}
       >
-
         <Outlet />
-
       </main>
-
-
-      {/* GLOBAL AI ASSISTANT */}
-      <AIAssistant />
 
     </div>
   );

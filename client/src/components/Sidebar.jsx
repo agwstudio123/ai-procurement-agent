@@ -209,11 +209,11 @@ export default function Sidebar() {
 
   return (
 
-    <div className="w-72 bg-slate-950 text-white min-h-screen flex flex-col">
+    <div className="w-full md:w-72 bg-slate-950 text-white md:min-h-screen flex flex-col shadow-lg">
 
-      <div className="p-8 border-b border-slate-800">
+      <div className="p-5 md:p-8 border-b border-slate-800">
 
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-xl md:text-2xl font-bold">
           🏗 BuildProcure AI
         </h1>
 
@@ -223,21 +223,21 @@ export default function Sidebar() {
 
       </div>
 
-      <div className="flex-1 mt-6">
+      <div className="flex-1 mt-2 md:mt-6 overflow-x-auto">
 
         {menu.map((item) => (
 
           <Link
             key={item.path}
             to={item.path}
-            className={`flex items-center gap-4 px-8 py-4 transition ${
+            className={`flex items-center gap-4 px-5 md:px-8 py-3 md:py-4 transition whitespace-nowrap ${
               location.pathname === item.path
                 ? "bg-blue-600"
                 : "hover:bg-slate-800"
             }`}
           >
 
-            <span>{item.icon}</span>
+            <span className="text-lg">{item.icon}</span>
 
             <span>{item.label}</span>
 
@@ -247,11 +247,11 @@ export default function Sidebar() {
 
       </div>
 
-      <div className="p-6 border-t border-slate-800">
+      <div className="p-4 md:p-6 border-t border-slate-800">
 
         <button
           onClick={logout}
-          className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 py-3 rounded-lg font-bold"
+          className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 py-3 rounded-lg font-bold transition"
         >
 
           <FaSignOutAlt />
