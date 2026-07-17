@@ -631,101 +631,36 @@ app.put("/contractors/:id", (req, res) => {
 
 app.get("/trusted-suppliers", (req, res) => {
 
+  const suppliers = getSuppliers();
 
   const orders = getOrders();
 
-  const suppliers = getSuppliers();
-
-
-
-  const trustedSupplierIds = orders
-
-    .filter(
-
-      (order) =>
-
-        order.status === "Completed" &&
-
-        order.paymentStatus === "Paid"
-
-    )
-
-    .map(
-
-      (order) => order.supplierId
-
-    );
-
-
-
-
-
   const trustedSuppliers = suppliers
-
     .filter(
-
       (supplier) =>
-
-        trustedSupplierIds.includes(supplier.id)
-
+        supplier.trusted === true ||
+        Number(supplier.trustScore || 0) >= 80
     )
-
     .map((supplier) => {
 
-
-
       const completedOrders = orders.filter(
-
         (order) =>
-
-          order.supplierId === supplier.id &&
-
-          order.status === "Completed" &&
-
-          order.paymentStatus === "Paid"
-
+          Number(order.supplierId) === Number(supplier.id) &&
+          order.status === "Completed"
       );
 
-
-
-
       return {
-
-
         id: supplier.id,
-
-
-        companyName:
-          supplier.companyName,
-
-
-        location:
-          supplier.location,
-
-
-        materials:
-          supplier.materials,
-
-
-        completedOrders:
-          completedOrders.length,
-
-
-        trustScore:
-          Math.min(
-            100,
-            90 + (completedOrders.length * 2)
-          ),
-
+        companyName: supplier.companyName,
+        location: supplier.location,
+        materials: supplier.materials,
+        completedOrders: completedOrders.length,
+        trustScore: supplier.trustScore || 95,
       };
-
 
     });
 
-
-
   res.json(trustedSuppliers);
-
 
 });
 
