@@ -22,6 +22,7 @@ export default function SupplierAddMaterial() {
 
 
 
+
   function handleChange(e) {
 
     setMaterial({
@@ -64,12 +65,15 @@ export default function SupplierAddMaterial() {
 
 
 
+
     const updatedSupplier = {
 
       ...currentSupplier,
 
       materials: [
+
         ...(currentSupplier.materials || [])
+
       ],
 
     };
@@ -78,60 +82,50 @@ export default function SupplierAddMaterial() {
 
 
 
-    const existingIndex = updatedSupplier.materials.findIndex(
 
-      (item) =>
+    const existingIndex =
+      updatedSupplier.materials.findIndex(
 
-        item.category?.toLowerCase() ===
+        (item) =>
 
-        material.category.toLowerCase()
+          item.category?.toLowerCase() ===
+          material.category.toLowerCase()
 
-    );
-
-
-
+      );
 
 
-    if (existingIndex !== -1) {
+
+
+
+
+    if(existingIndex !== -1){
 
 
       updatedSupplier.materials[existingIndex] = {
 
-
         ...updatedSupplier.materials[existingIndex],
-
 
         ...material,
 
-
-        status: "Available",
-
+        status:"Available",
 
       };
 
 
-
-    } else {
-
+    }else{
 
 
       updatedSupplier.materials.push({
 
-
         id: Date.now(),
-
 
         ...material,
 
-
         supplierId: currentSupplier.id,
-
 
         supplierName: currentSupplier.companyName,
 
-
-        status: "Available",
-
+        status:"Available",
 
       });
 
@@ -142,35 +136,18 @@ export default function SupplierAddMaterial() {
 
 
 
-    const category = material.category.toLowerCase();
+
+
+    const category =
+      material.category.toLowerCase();
 
 
 
 
-    if (category === "cement") {
+    if(category==="cement"){
 
-      updatedSupplier.cementPrice = Number(material.price);
-
-    }
-
-
-
-
-    if (category === "steel") {
-
-      updatedSupplier.steelPrice = Number(material.price);
-
-    }
-
-
-
-
-    if (
-      category === "block" ||
-      category === "blocks"
-    ) {
-
-      updatedSupplier.blockPrice = Number(material.price);
+      updatedSupplier.cementPrice =
+        Number(material.price);
 
     }
 
@@ -178,8 +155,34 @@ export default function SupplierAddMaterial() {
 
 
 
-    try {
+    if(category==="steel"){
 
+      updatedSupplier.steelPrice =
+        Number(material.price);
+
+    }
+
+
+
+
+
+    if(
+      category==="block" ||
+      category==="blocks"
+    ){
+
+      updatedSupplier.blockPrice =
+        Number(material.price);
+
+    }
+
+
+
+
+
+
+
+    try{
 
 
       const response = await fetch(
@@ -188,17 +191,15 @@ export default function SupplierAddMaterial() {
 
         {
 
-          method: "PUT",
+          method:"PUT",
 
+          headers:{
 
-          headers: {
-
-            "Content-Type": "application/json",
+            "Content-Type":"application/json",
 
           },
 
-
-          body: JSON.stringify(updatedSupplier),
+          body:JSON.stringify(updatedSupplier),
 
         }
 
@@ -208,21 +209,21 @@ export default function SupplierAddMaterial() {
 
 
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
 
 
 
 
-      if (!result.success) {
-
+      if(!result.success){
 
         alert("Failed to save material.");
 
         return;
 
-
       }
+
 
 
 
@@ -240,17 +241,20 @@ export default function SupplierAddMaterial() {
 
 
 
-      alert("Material saved successfully!");
+      alert(
+        "Material saved successfully!"
+      );
 
 
 
-      navigate("/supplier-materials");
+      navigate(
+        "/supplier-materials"
+      );
 
 
 
 
-
-    } catch(error) {
+    }catch(error){
 
 
       console.error(
@@ -259,7 +263,9 @@ export default function SupplierAddMaterial() {
       );
 
 
-      alert("Unable to connect to server.");
+      alert(
+        "Unable to connect to server."
+      );
 
 
     }
@@ -272,16 +278,37 @@ export default function SupplierAddMaterial() {
 
 
 
+
+
   return (
 
-    <div className="min-h-screen bg-gray-100 p-10">
+    <div className="
+      min-h-screen
+      bg-gray-100
+      p-4
+      md:p-10
+    ">
 
 
-      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow p-8">
+
+      <div className="
+        max-w-2xl
+        mx-auto
+        bg-white
+        rounded-xl
+        shadow
+        p-5
+        md:p-8
+      ">
 
 
 
-        <h1 className="text-3xl font-bold">
+
+        <h1 className="
+          text-2xl
+          md:text-3xl
+          font-bold
+        ">
 
           Add New Material
 
@@ -289,7 +316,12 @@ export default function SupplierAddMaterial() {
 
 
 
-        <p className="text-gray-600 mt-2">
+
+
+        <p className="
+          text-gray-600
+          mt-2
+        ">
 
           Add materials contractors can purchase.
 
@@ -298,24 +330,59 @@ export default function SupplierAddMaterial() {
 
 
 
+
+
+
+
         <form
 
           onSubmit={handleSubmit}
 
-          className="mt-8 space-y-5"
+          className="
+            mt-8
+            space-y-5
+          "
 
         >
 
 
 
+
+
+
           {[
+
             ["name","Material Name"],
-            ["category","Category (Cement, Steel, Blocks)"],
-            ["quantity","Quantity Available"],
-            ["unit","Unit"],
-            ["price","Price (USDC)"],
-            ["location","Location"],
+
+            [
+              "category",
+              "Category (Cement, Steel, Blocks)"
+            ],
+
+            [
+              "quantity",
+              "Quantity Available"
+            ],
+
+            [
+              "unit",
+              "Unit"
+            ],
+
+            [
+              "price",
+              "Price (USDC)"
+            ],
+
+            [
+              "location",
+              "Location"
+            ],
+
+
           ].map(([name,placeholder]) => (
+
+
 
             <input
 
@@ -329,11 +396,21 @@ export default function SupplierAddMaterial() {
 
               onChange={handleChange}
 
-              className="w-full border p-3 rounded-lg"
+              className="
+                w-full
+                border
+                p-3
+                rounded-lg
+                focus:outline-none
+                focus:ring-2
+                focus:ring-blue-500
+              "
 
               required
 
             />
+
+
 
           ))}
 
@@ -341,17 +418,33 @@ export default function SupplierAddMaterial() {
 
 
 
+
+
           <input
+
 
             name="wallet"
 
+
             placeholder="Wallet Address (Optional)"
+
 
             value={material.wallet}
 
+
             onChange={handleChange}
 
-            className="w-full border p-3 rounded-lg"
+
+            className="
+              w-full
+              border
+              p-3
+              rounded-lg
+              focus:outline-none
+              focus:ring-2
+              focus:ring-blue-500
+            "
+
 
           />
 
@@ -359,17 +452,33 @@ export default function SupplierAddMaterial() {
 
 
 
+
+
+
           <button
+
 
             type="submit"
 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold"
+
+            className="
+              w-full
+              bg-blue-600
+              hover:bg-blue-700
+              text-white
+              py-3
+              rounded-lg
+              font-bold
+            "
+
 
           >
 
             Save Material
 
+
           </button>
+
 
 
 
@@ -378,10 +487,16 @@ export default function SupplierAddMaterial() {
 
 
 
+
+
       </div>
 
 
+
+
+
     </div>
+
 
   );
 

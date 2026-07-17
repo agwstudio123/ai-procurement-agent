@@ -1,118 +1,151 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { API_URL } from "../api";
 
-export default function SupplierMaterials() {
+export default function SupplierDashboard() {
 
-  const [materials, setMaterials] = useState([]);
-
-  const navigate = useNavigate();
-
-
-
-  async function loadMaterials() {
-
-    try {
-
-      const currentSupplier = JSON.parse(
-        localStorage.getItem("currentSupplier")
-      );
-
-
-      if (!currentSupplier) return;
-
-
-
-      const response = await fetch(
-        `${API_URL}/suppliers`
-      );
-
-
-      const suppliers = await response.json();
-
-
-
-      const supplier = suppliers.find(
-        (item) =>
-          Number(item.id) === Number(currentSupplier.id)
-      );
-
-
-
-      if (supplier) {
-
-        setMaterials(
-          supplier.materials || []
-        );
-
-
-        localStorage.setItem(
-          "currentSupplier",
-          JSON.stringify(supplier)
-        );
-
-      }
-
-
-
-    } catch(error) {
-
-      console.error(
-        "Failed loading materials:",
-        error
-      );
-
-    }
-
-  }
-
-
-
+  const [supplier, setSupplier] = useState(null);
+  const [activeOrders, setActiveOrders] = useState(0);
+  const [earnings, setEarnings] = useState(0);
 
 
   useEffect(() => {
 
-    loadMaterials();
+    async function loadSupplier() {
+
+      const supplierData = JSON.parse(
+        localStorage.getItem("currentSupplier")
+      );
+
+      if (!supplierData) return;
+
+      setSupplier(supplierData);
+
+
+      try {
+
+        const response = await fetch(
+          `${API_URL}/orders`
+        );
+
+        const orders = await response.json();
+
+
+        const supplierOrders = orders.filter(
+          (order) =>
+            Number(order.supplierId) === Number(supplierData.id)
+        );
+
+
+        const active = supplierOrders.filter(
+          (order) =>
+            order.status === "Pending" ||
+            order.status === "Accepted"
+        );
+
+
+        setActiveOrders(active.length);
+
+
+
+        const total = supplierOrders
+          .filter(
+            (order) =>
+              order.status === "Completed" &&
+              order.paymentStatus === "Paid"
+          )
+          .reduce(
+            (sum, order) =>
+              sum +
+              Number(
+                order.totalAmount ||
+                order.amount ||
+                0
+              ),
+            0
+          );
+
+
+        setEarnings(total);
+
+
+      } catch(error){
+
+        console.log(error);
+
+      }
+
+    }
+
+
+    loadSupplier();
 
 
     const interval = setInterval(
-      loadMaterials,
+      loadSupplier,
       5000
     );
 
 
-    return () =>
-      clearInterval(interval);
+    return () => clearInterval(interval);
 
 
   }, []);
 
 
 
+  if(!supplier){
+
+    return (
+
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+
+        <div className="bg-white rounded-xl shadow p-8 text-center">
+
+          <h1 className="text-2xl font-bold">
+            No Supplier Account Found
+          </h1>
+
+
+          <Link
+            to="/supplier-register"
+            className="inline-block mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg"
+          >
+            Register Supplier
+          </Link>
+
+        </div>
+
+      </div>
+
+    );
+
+  }
 
 
 
   return (
 
-    <div className="min-h-screen bg-gray-100 p-10">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-10">
 
 
+      {/* HEADER */}
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between gap-5">
 
 
         <div>
 
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl md:text-3xl font-bold">
 
-            🧱 My Materials
+            🚚 Welcome {supplier.companyName}
 
           </h1>
 
 
           <p className="text-gray-600 mt-2">
 
-            Manage materials available for contractors.
+            Manage your materials, orders and payments.
 
           </p>
 
@@ -123,18 +156,22 @@ export default function SupplierMaterials() {
 
         <button
 
-          onClick={() =>
-            navigate("/supplier-add-material")
-          }
+          onClick={() => {
 
-          className="bg-blue-600 text-white px-5 py-3 rounded-lg"
+            localStorage.removeItem("userType");
+            localStorage.removeItem("currentSupplier");
+
+            window.location.href="/";
+
+          }}
+
+          className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold w-full md:w-auto"
 
         >
 
-          + Add Material
+          Logout
 
         </button>
-
 
 
       </div>
@@ -143,129 +180,210 @@ export default function SupplierMaterials() {
 
 
 
+      {/* STATS */}
 
-      <div className="grid md:grid-cols-3 gap-6 mt-8">
-
-
-
-        {
-        materials.length === 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
 
 
-          <div className="bg-white rounded-xl shadow p-6">
+        <div className="bg-white rounded-xl shadow p-6">
 
+          <p className="text-gray-500">
+            Materials Listed
+          </p>
 
-            <h2 className="font-bold text-xl">
+          <h2 className="text-3xl font-bold mt-2">
+            {supplier.materials?.length || 0}
+          </h2>
 
-              No Material Added
-
-            </h2>
-
-
-            <p className="mt-2 text-gray-500">
-
-              Start adding materials for contractors.
-
-            </p>
-
-
-          </div>
+        </div>
 
 
 
-        ) : (
+
+        <Link
+          to="/supplier-orders"
+          className="bg-white rounded-xl shadow p-6 hover:bg-blue-50"
+        >
+
+          <p className="text-gray-500">
+            Active Orders
+          </p>
 
 
-          materials.map((item)=>(
+          <h2 className="text-3xl font-bold mt-2 text-blue-600">
+            {activeOrders}
+          </h2>
+
+
+          <p className="text-blue-600 mt-2">
+            View Orders →
+          </p>
+
+        </Link>
+
+
+
+
+
+        <div className="bg-white rounded-xl shadow p-6">
+
+          <p className="text-gray-500">
+            Earnings
+          </p>
+
+          <h2 className="text-3xl font-bold mt-2">
+            {earnings.toFixed(2)} USDC
+          </h2>
+
+        </div>
+
+
+
+
+
+        <div className="bg-white rounded-xl shadow p-6">
+
+          <p className="text-gray-500">
+            Trust Score
+          </p>
+
+          <h2 className="text-3xl font-bold mt-2">
+            ⭐ {supplier.trustScore || 95}
+          </h2>
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+      {/* PROFILE */}
+
+      <div className="bg-white rounded-xl shadow p-5 md:p-6 mt-8">
+
+
+        <div className="flex flex-col sm:flex-row justify-between gap-3">
+
+
+          <h2 className="text-xl font-bold">
+            Company Profile
+          </h2>
+
+
+          <Link
+            to="/supplier-profile"
+            className="text-blue-600 font-semibold"
+          >
+
+            ✏️ Edit Profile
+
+          </Link>
+
+
+        </div>
+
+
+        <div className="space-y-3 mt-5 break-words">
+
+
+          <p>
+            <strong>Company:</strong> {supplier.companyName}
+          </p>
+
+
+          <p>
+            <strong>Owner:</strong> {supplier.ownerName}
+          </p>
+
+
+          <p>
+            <strong>Location:</strong> {supplier.location}
+          </p>
+
+
+          <p>
+            <strong>Wallet:</strong> {supplier.wallet}
+          </p>
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+      {/* MATERIALS */}
+
+      <div className="bg-white rounded-xl shadow p-5 md:p-6 mt-8">
+
+
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+
+
+          <h2 className="text-xl font-bold">
+            My Materials
+          </h2>
+
+
+          <Link
+            to="/supplier-materials"
+            className="bg-blue-600 text-white px-5 py-3 rounded-lg text-center"
+          >
+
+            Manage Materials
+
+          </Link>
+
+
+        </div>
+
+
+
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+
+
+          {supplier.materials?.map((item)=>(
 
 
             <div
-
               key={item.id}
-
-              className="bg-white rounded-xl shadow p-6"
-
+              className="border rounded-xl p-4"
             >
 
-
-              <h2 className="text-xl font-bold">
-
+              <h3 className="text-lg font-bold">
                 {item.name}
-
-              </h2>
-
-
-
-              <p className="mt-3">
-
-                Quantity:
-
-                <span className="font-semibold">
-
-                  {" "}
-                  {item.quantity} {item.unit}
-
-                </span>
-
-              </p>
-
-
+              </h3>
 
 
               <p>
-
-                Price:
-
-                <span className="font-semibold">
-
-                  {" "}
-                  {item.price} USDC / {item.unit}
-
-                </span>
-
+                {item.quantity} {item.unit}
               </p>
 
 
-
-
-
-              <p>
-
-                Location:
-
-                <span className="font-semibold">
-
-                  {" "}
-                  {item.location || "Not specified"}
-
-                </span>
-
+              <p className="font-semibold text-blue-600">
+                {item.price} USDC
               </p>
 
 
-
-
-
-              <div className="mt-4 bg-green-100 text-green-700 p-2 rounded-lg text-center">
-
-
-                ✅ {item.status || "Available"}
-
-
-              </div>
-
+              <p className="mt-3 text-green-600 font-semibold">
+                ✅ Available
+              </p>
 
 
             </div>
 
 
-          ))
+          ))}
 
 
-        )
-
-        }
-
+        </div>
 
 
       </div>

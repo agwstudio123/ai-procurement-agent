@@ -33,13 +33,11 @@ export default function SupplierDashboard() {
         const orders = await response.json();
 
 
-
         const supplierOrders = orders.filter(
           (order) =>
             Number(order.supplierId) ===
             Number(supplierData.id)
         );
-
 
 
         const active = supplierOrders.filter(
@@ -50,7 +48,6 @@ export default function SupplierDashboard() {
 
 
         setActiveOrders(active.length);
-
 
 
         const total = supplierOrders
@@ -74,7 +71,6 @@ export default function SupplierDashboard() {
         setEarnings(total);
 
 
-
       } catch (error) {
 
         console.log(error);
@@ -84,9 +80,7 @@ export default function SupplierDashboard() {
     }
 
 
-
     loadSupplier();
-
 
 
     const interval = setInterval(
@@ -104,7 +98,7 @@ export default function SupplierDashboard() {
 
   if (!supplier) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
 
         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
 
@@ -136,14 +130,25 @@ export default function SupplierDashboard() {
 
   return (
 
-    <div className="min-h-screen bg-gray-100 p-10">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-10">
 
 
-      <div className="flex justify-between items-start">
+      <div className="
+        flex 
+        flex-col 
+        md:flex-row 
+        justify-between 
+        items-start 
+        gap-4
+      ">
 
         <div>
 
-          <h1 className="text-3xl font-bold">
+          <h1 className="
+            text-2xl 
+            md:text-3xl 
+            font-bold
+          ">
             🚚 Welcome {supplier.companyName}
           </h1>
 
@@ -169,7 +174,15 @@ export default function SupplierDashboard() {
 
           }}
 
-          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold"
+          className="
+            bg-red-600 
+            hover:bg-red-700 
+            text-white 
+            px-6 
+            py-3 
+            rounded-lg 
+            font-bold
+          "
 
         >
 
@@ -184,7 +197,14 @@ export default function SupplierDashboard() {
 
 
 
-      <div className="grid md:grid-cols-4 gap-6 mt-8">
+      <div className="
+        grid 
+        grid-cols-1 
+        sm:grid-cols-2 
+        xl:grid-cols-4 
+        gap-6 
+        mt-8
+      ">
 
 
         <div className="bg-white rounded-xl shadow p-6">
@@ -206,11 +226,8 @@ export default function SupplierDashboard() {
 
 
         <Link
-
           to="/supplier-orders"
-
           className="bg-white rounded-xl shadow p-6 hover:bg-blue-50 transition"
-
         >
 
           <p className="text-gray-500">
@@ -234,7 +251,6 @@ export default function SupplierDashboard() {
 
 
 
-
         <div className="bg-white rounded-xl shadow p-6">
 
           <p className="text-gray-500">
@@ -250,7 +266,6 @@ export default function SupplierDashboard() {
 
 
         </div>
-
 
 
 
@@ -277,11 +292,18 @@ export default function SupplierDashboard() {
 
 
 
-
       <div className="bg-white rounded-xl shadow p-6 mt-8">
 
 
-        <div className="flex justify-between items-center">
+        <div className="
+          flex 
+          flex-col 
+          sm:flex-row 
+          justify-between 
+          items-start 
+          sm:items-center 
+          gap-3
+        ">
 
 
           <h2 className="text-xl font-bold">
@@ -301,6 +323,7 @@ export default function SupplierDashboard() {
 
 
         </div>
+
 
 
 
@@ -326,7 +349,7 @@ export default function SupplierDashboard() {
           </p>
 
 
-          <p>
+          <p className="break-all">
             <strong>Wallet:</strong>{" "}
             {supplier.wallet}
           </p>
@@ -347,11 +370,18 @@ export default function SupplierDashboard() {
 
 
 
-
       <div className="bg-white rounded-xl shadow p-6 mt-8">
 
 
-        <div className="flex justify-between items-center">
+        <div className="
+          flex 
+          flex-col 
+          sm:flex-row 
+          justify-between 
+          items-start 
+          sm:items-center 
+          gap-3
+        ">
 
 
           <h2 className="text-xl font-bold">
@@ -361,11 +391,8 @@ export default function SupplierDashboard() {
 
 
           <Link
-
             to="/supplier-materials"
-
             className="bg-blue-600 text-white px-5 py-2 rounded-lg"
-
           >
 
             Manage Materials
@@ -391,18 +418,22 @@ export default function SupplierDashboard() {
         ) : (
 
 
-          <div className="grid md:grid-cols-3 gap-5 mt-6">
+          <div className="
+            grid 
+            grid-cols-1 
+            sm:grid-cols-2 
+            xl:grid-cols-3 
+            gap-5 
+            mt-6
+          ">
 
 
             {supplier.materials.map((item) => (
 
 
               <div
-
                 key={item.id}
-
                 className="border rounded-xl p-4"
-
               >
 
 
