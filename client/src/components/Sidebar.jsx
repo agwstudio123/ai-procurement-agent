@@ -12,6 +12,7 @@ import {
   FaBoxes,
   FaMoneyBill,
   FaStar,
+  FaTimes,
 } from "react-icons/fa";
 
 import {
@@ -24,51 +25,56 @@ import { useEffect, useState } from "react";
 import { API_URL } from "../api";
 import AIAssistant from "./AIAssistant";
 
-export default function Sidebar() {
+
+export default function Sidebar({ menuOpen, setMenuOpen }) {
 
   const location = useLocation();
 
   const [notifications, setNotifications] = useState([]);
 
-  const userType =
-    localStorage.getItem("userType");
+
+  const userType = localStorage.getItem("userType");
+
 
   const supplier =
-    JSON.parse(
-      localStorage.getItem("currentSupplier")
-    );
+    JSON.parse(localStorage.getItem("currentSupplier"));
+
 
   const contractor =
-    JSON.parse(
-      localStorage.getItem("currentContractor")
-    );
+    JSON.parse(localStorage.getItem("currentContractor"));
+
+
 
   const unreadCount =
-    notifications.filter(
-      (n) => !n.read
-    ).length;
+    notifications.filter((n)=>!n.read).length;
 
-  useEffect(() => {
+
+
+  useEffect(()=>{
 
     const user = supplier || contractor;
 
-    if (!user) return;
+    if(!user) return;
 
-    async function loadNotifications() {
 
-      try {
+    async function loadNotifications(){
+
+      try{
 
         const response =
           await fetch(
             `${API_URL}/notifications/${user.id}`
           );
 
+
         const data =
           await response.json();
 
+
         setNotifications(data);
 
-      } catch (err) {
+
+      }catch(err){
 
         console.log(err);
 
@@ -76,196 +82,281 @@ export default function Sidebar() {
 
     }
 
+
     loadNotifications();
 
+
     const interval =
-      setInterval(
-        loadNotifications,
-        1000
-      );
+      setInterval(loadNotifications,1000);
 
-    return () => clearInterval(interval);
 
-  }, []);
+    return ()=>clearInterval(interval);
 
-  function logout() {
+
+  },[]);
+
+
+
+  function logout(){
 
     localStorage.removeItem("userType");
     localStorage.removeItem("currentSupplier");
     localStorage.removeItem("currentContractor");
 
-    window.location.href = "/";
+    window.location.href="/";
 
   }
 
-  const contractorMenu = [
+
+
+
+  const contractorMenu=[
+
+    {icon:<FaHome/>,label:"Dashboard",path:"/dashboard"},
+
+    {icon:<FaClipboardList/>,label:"Bill of Quantities",path:"/boq"},
+
+    {icon:<FaBox/>,label:"My Orders",path:"/contractor-orders"},
+
+    {icon:<FaTruck/>,label:"Suppliers",path:"/suppliers"},
 
     {
-      icon: <FaHome />,
-      label: "Dashboard",
-      path: "/dashboard",
+      icon:<FaBell/>,
+      label:`Notifications (${unreadCount})`,
+      path:"/notifications"
     },
 
-    {
-      icon: <FaClipboardList />,
-      label: "Bill of Quantities",
-      path: "/boq",
-    },
+    {icon:<FaHistory/>,label:"Procurement History",path:"/history"},
 
-    {
-      icon: <FaBox />,
-      label: "My Orders",
-      path: "/contractor-orders",
-    },
+    {icon:<FaWallet/>,label:"Payments",path:"/payments"},
 
-    {
-      icon: <FaTruck />,
-      label: "Suppliers",
-      path: "/suppliers",
-    },
+    {icon:<FaChartBar/>,label:"Analytics",path:"/analytics"},
 
-    {
-      icon: <FaBell />,
-      label: `Notifications (${unreadCount})`,
-      path: "/notifications",
-    },
-
-    {
-      icon: <FaHistory />,
-      label: "Procurement History",
-      path: "/history",
-    },
-
-    {
-      icon: <FaWallet />,
-      label: "Payments",
-      path: "/payments",
-    },
-
-    {
-      icon: <FaChartBar />,
-      label: "Analytics",
-      path: "/analytics",
-    },
-
-    {
-      icon: <FaCog />,
-      label: "Settings",
-      path: "/settings",
-    },
+    {icon:<FaCog/>,label:"Settings",path:"/settings"},
 
   ];
 
-  const supplierMenu = [
+
+
+  const supplierMenu=[
+
+    {icon:<FaHome/>,label:"Dashboard",path:"/supplier-dashboard"},
+
+    {icon:<FaBox/>,label:"My Orders",path:"/supplier-orders"},
+
+    {icon:<FaBoxes/>,label:"My Materials",path:"/supplier-materials"},
 
     {
-      icon: <FaHome />,
-      label: "Dashboard",
-      path: "/supplier-dashboard",
+      icon:<FaBell/>,
+      label:`Notifications (${unreadCount})`,
+      path:"/notifications"
     },
 
-    {
-      icon: <FaBox />,
-      label: "My Orders",
-      path: "/supplier-orders",
-    },
+    {icon:<FaMoneyBill/>,label:"Earnings",path:"/supplier-earnings"},
 
-    {
-      icon: <FaBoxes />,
-      label: "My Materials",
-      path: "/supplier-materials",
-    },
+    {icon:<FaStar/>,label:"Trust Score",path:"/supplier-trust-score"},
 
-    {
-      icon: <FaBell />,
-      label: `Notifications (${unreadCount})`,
-      path: "/notifications",
-    },
-
-    {
-      icon: <FaMoneyBill />,
-      label: "Earnings",
-      path: "/supplier-earnings",
-    },
-
-    {
-      icon: <FaStar />,
-      label: "Trust Score",
-      path: "/supplier-trust-score",
-    },
-
-    {
-      icon: <FaCog />,
-      label: "Settings",
-      path: "/supplier-profile",
-    },
+    {icon:<FaCog/>,label:"Settings",path:"/supplier-profile"},
 
   ];
+
+
 
   const menu =
-    userType === "supplier"
-      ? supplierMenu
-      : contractorMenu;
+    userType==="supplier"
+    ? supplierMenu
+    : contractorMenu;
+
+
 
   return (
 
-    <div className="w-full md:w-72 bg-slate-950 text-white md:min-h-screen flex flex-col shadow-lg">
+    <>
 
-      <div className="p-5 md:p-8 border-b border-slate-800">
 
-        <h1 className="text-xl md:text-2xl font-bold">
-          🏗 BuildProcure AI
-        </h1>
+      {/* MOBILE OVERLAY */}
 
-        <p className="text-sm text-slate-400 mt-2">
-          AI Construction Procurement
-        </p>
+      {menuOpen && (
 
-      </div>
+        <div
+          onClick={()=>setMenuOpen(false)}
+          className="
+            fixed
+            inset-0
+            bg-black/50
+            z-40
+            md:hidden
+          "
+        />
 
-      <div className="flex-1 mt-2 md:mt-6 overflow-x-auto">
+      )}
 
-        {menu.map((item) => (
 
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`flex items-center gap-4 px-5 md:px-8 py-3 md:py-4 transition whitespace-nowrap ${
-              location.pathname === item.path
-                ? "bg-blue-600"
-                : "hover:bg-slate-800"
-            }`}
+
+
+      <aside
+
+        className={`
+          fixed
+          top-0
+          left-0
+         + min-h-screen
+          w-72
+          bg-slate-950
+          text-white
+          flex
+          flex-col
+          shadow-lg
+          z-50
+
+          transform
+          transition-transform
+          duration-300
+
+          ${menuOpen
+            ? "translate-x-0"
+            : "-translate-x-full"
+          }
+
+          md:static
+          md:translate-x-0
+        `}
+
+      >
+
+
+
+        <div className="
+          p-5 md:p-8
+          border-b
+          border-slate-800
+          flex
+          justify-between
+          items-center
+        ">
+
+
+          <h1 className="text-xl md:text-2xl font-bold">
+            🏗 BuildProcure AI
+          </h1>
+
+
+
+          <button
+            onClick={()=>setMenuOpen(false)}
+            className="md:hidden"
           >
 
-            <span className="text-lg">{item.icon}</span>
+            <FaTimes size={22}/>
 
-            <span>{item.label}</span>
+          </button>
 
-          </Link>
 
-        ))}
+        </div>
 
-      </div>
 
-      <div className="p-4 md:p-6 border-t border-slate-800">
 
-        <button
-          onClick={logout}
-          className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 py-3 rounded-lg font-bold transition"
-        >
+        <div className="flex-1 mt-4 overflow-y-auto">
 
-          <FaSignOutAlt />
 
-          Logout
+          {menu.map((item)=>(
 
-        </button>
 
-      </div>
+            <Link
 
-      {/* FLOATING AI */}
-      <AIAssistant />
+              key={item.path}
 
-    </div>
+              to={item.path}
+
+              onClick={()=>setMenuOpen(false)}
+
+              className={`
+
+                flex
+                items-center
+                gap-4
+                px-8
+                py-4
+                transition
+
+                ${
+                  location.pathname===item.path
+                  ? "bg-blue-600"
+                  : "hover:bg-slate-800"
+                }
+
+              `}
+
+            >
+
+              <span className="text-lg">
+                {item.icon}
+              </span>
+
+
+              <span>
+                {item.label}
+              </span>
+
+
+            </Link>
+
+
+          ))}
+
+
+        </div>
+
+
+
+
+        <div className="
+          p-4
+          md:p-6
+          border-t
+          border-slate-800
+        ">
+
+
+          <button
+
+            onClick={logout}
+
+            className="
+              w-full
+              flex
+              items-center
+              justify-center
+              gap-2
+              bg-red-600
+              hover:bg-red-700
+              py-3
+              rounded-lg
+              font-bold
+            "
+
+          >
+
+            <FaSignOutAlt/>
+
+            Logout
+
+
+          </button>
+
+
+        </div>
+
+
+
+
+        <AIAssistant/>
+
+
+      </aside>
+
+
+    </>
 
   );
 

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_URL } from "../api";
 
-import Header from "../components/Header";
 import StatsCard from "../components/StatsCard";
 import SupplierChart from "../components/SupplierChart";
 import SupplierTable from "../components/SupplierTable";
@@ -116,9 +115,7 @@ export default function Dashboard() {
     <div className="bg-gray-100 min-h-screen">
       <main className="w-full p-4 md:p-8">
 
-        <Header />
-
-        {/* Statistics */}
+  {/* Statistics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
 
           <StatsCard

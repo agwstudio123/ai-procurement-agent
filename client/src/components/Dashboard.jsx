@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-import Header from "../components/Header";
 import StatsCard from "../components/StatsCard";
 import SupplierTable from "../components/SupplierTable";
 import AIReport from "../components/AIRecommendation";
@@ -45,6 +44,7 @@ export default function Dashboard() {
 
   const totalOrders = orders.length;
 
+
   const completedOrders = orders.filter(
     (order) => order.status === "Completed"
   ).length;
@@ -72,7 +72,7 @@ export default function Dashboard() {
   const moneySaved = orders
     .filter(
       (order) =>
-        order.contractorId === contractor?.id &&
+        Number(order.contractorId) === Number(contractor?.id) &&
         order.status === "Completed" &&
         order.paymentStatus === "Paid"
     )
@@ -94,9 +94,6 @@ export default function Dashboard() {
   return (
 
     <div className="p-4 md:p-8 w-full overflow-x-hidden">
-
-
-      <Header />
 
 
       {/* Stats */}
@@ -153,7 +150,7 @@ export default function Dashboard() {
       <div className="mt-6 md:mt-8">
 
         <BOQForm
-          onResult={(data)=>{
+          onResult={(data) => {
             setResult(data);
           }}
         />
@@ -250,7 +247,12 @@ export default function Dashboard() {
 
       {/* Suppliers */}
 
-      <div className="mt-6 md:mt-8 overflow-x-auto">
+      <div className="
+        mt-6 
+        md:mt-8 
+        overflow-x-auto 
+        rounded-xl
+      ">
 
         <SupplierTable />
 
