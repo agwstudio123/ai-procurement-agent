@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../api";
 
 export default function TrustedSuppliers() {
   const [suppliers, setSuppliers] = useState([]);
@@ -10,7 +11,7 @@ export default function TrustedSuppliers() {
   async function loadTrustedSuppliers() {
     try {
       const response = await fetch(
-        "http://localhost:3000/trusted-suppliers"
+        `${API_URL}/trusted-suppliers`
       );
 
       const data = await response.json();
@@ -35,7 +36,6 @@ export default function TrustedSuppliers() {
       <p className="text-gray-600 mt-2">
         Suppliers with successful completed orders.
       </p>
-
 
       {suppliers.length === 0 ? (
 
@@ -62,38 +62,30 @@ export default function TrustedSuppliers() {
                 {supplier.companyName}
               </h2>
 
-
               <p className="mt-2">
-                📍 Location:
-                {" "}
+                📍 Location:{" "}
                 {supplier.location}
               </p>
 
-
               <p className="mt-2">
-                📦 Completed Orders:
-                {" "}
+                📦 Completed Orders:{" "}
                 <strong>
                   {supplier.completedOrders}
                 </strong>
               </p>
 
-
               <p className="mt-2">
-                ⭐ Trust Score:
-                {" "}
+                ⭐ Trust Score:{" "}
                 <strong>
                   {supplier.trustScore}%
                 </strong>
               </p>
-
 
               <div className="mt-4">
 
                 <h3 className="font-bold">
                   Materials:
                 </h3>
-
 
                 <div className="flex flex-wrap gap-2 mt-2">
 
@@ -110,9 +102,7 @@ export default function TrustedSuppliers() {
 
                 </div>
 
-
               </div>
-
 
             </div>
 

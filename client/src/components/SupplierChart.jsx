@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../api";
 
 import {
   BarChart,
@@ -10,15 +11,13 @@ import {
   CartesianGrid,
 } from "recharts";
 
-
 export default function SupplierChart() {
 
   const [suppliers, setSuppliers] = useState([]);
 
-
   useEffect(() => {
 
-    fetch("http://localhost:3000/suppliers")
+    fetch(`${API_URL}/suppliers`)
       .then((response) => response.json())
       .then((data) => {
 
@@ -30,7 +29,6 @@ export default function SupplierChart() {
                 item.name.toLowerCase() === "cement"
             )?.price || 0;
 
-
           return {
             name: supplier.companyName,
             price: Number(cement),
@@ -38,30 +36,26 @@ export default function SupplierChart() {
 
         });
 
-
         console.log("CHART DATA:", chartData);
 
         setSuppliers(chartData);
 
       })
       .catch((error) => {
+
         console.log(error);
+
       });
 
-
   }, []);
-
-
 
   return (
 
     <div className="bg-white rounded-2xl shadow p-6">
 
-
       <h2 className="text-xl font-bold text-slate-800 mb-6">
         Supplier Cost Comparison
       </h2>
-
 
       {suppliers.length > 0 ? (
 
@@ -106,7 +100,6 @@ export default function SupplierChart() {
         </p>
 
       )}
-
 
     </div>
 

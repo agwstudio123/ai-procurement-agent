@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../api";
 
 export default function SupplierTrustScore() {
   const [score, setScore] = useState(95);
@@ -12,11 +13,17 @@ export default function SupplierTrustScore() {
           localStorage.getItem("currentSupplier")
         );
 
-        const response = await fetch("http://localhost:3000/orders");
+        if (!supplier) return;
+
+        const response = await fetch(
+          `${API_URL}/orders`
+        );
+
         const orders = await response.json();
 
         const myOrders = orders.filter(
-          (order) => order.supplierId === supplier.id
+          (order) =>
+            Number(order.supplierId) === Number(supplier.id)
         );
 
         const completed = myOrders.filter(
@@ -55,7 +62,6 @@ export default function SupplierTrustScore() {
       </p>
 
       <div className="grid md:grid-cols-3 gap-6 mt-8">
-
         <div className="bg-white rounded-xl shadow p-6">
           <p className="text-gray-500">
             Trust Score
@@ -85,11 +91,9 @@ export default function SupplierTrustScore() {
             {paidOrders}
           </h2>
         </div>
-
       </div>
 
       <div className="bg-white rounded-xl shadow p-6 mt-8">
-
         <div className="flex justify-between mb-3">
           <span className="font-semibold">
             Overall Reputation
@@ -104,11 +108,9 @@ export default function SupplierTrustScore() {
             style={{ width: `${score}%` }}
           />
         </div>
-
       </div>
 
       <div className="bg-blue-50 rounded-xl p-6 mt-8 border border-blue-200">
-
         <h2 className="font-bold text-xl">
           🤖 AI Recommendation
         </h2>
@@ -117,7 +119,6 @@ export default function SupplierTrustScore() {
           Complete orders on time and maintain successful USDC payments to
           increase your trust score and attract more contractors.
         </p>
-
       </div>
     </div>
   );

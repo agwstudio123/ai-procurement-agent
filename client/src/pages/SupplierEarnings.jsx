@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../api";
 
 export default function SupplierEarnings() {
+
   const supplier = JSON.parse(
     localStorage.getItem("currentSupplier")
   );
@@ -8,10 +10,13 @@ export default function SupplierEarnings() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+
     async function loadOrders() {
+
       try {
+
         const response = await fetch(
-          "http://localhost:3000/orders"
+          `${API_URL}/orders`
         );
 
         const data = await response.json();
@@ -23,12 +28,17 @@ export default function SupplierEarnings() {
         );
 
         setOrders(supplierOrders);
+
       } catch (error) {
+
         console.log(error);
+
       }
+
     }
 
     loadOrders();
+
   }, []);
 
   const totalEarned = orders.reduce(
@@ -38,6 +48,7 @@ export default function SupplierEarnings() {
   );
 
   return (
+
     <div className="p-10">
 
       <h1 className="text-3xl font-bold">
@@ -51,6 +62,7 @@ export default function SupplierEarnings() {
       <div className="grid md:grid-cols-2 gap-6 mt-8">
 
         <div className="bg-white rounded-xl shadow p-6">
+
           <p className="text-gray-500">
             Total Earnings
           </p>
@@ -58,9 +70,11 @@ export default function SupplierEarnings() {
           <h2 className="text-4xl font-bold text-green-600 mt-2">
             {totalEarned.toFixed(5)} USDC
           </h2>
+
         </div>
 
         <div className="bg-white rounded-xl shadow p-6">
+
           <p className="text-gray-500">
             Paid Orders
           </p>
@@ -68,6 +82,7 @@ export default function SupplierEarnings() {
           <h2 className="text-4xl font-bold mt-2">
             {orders.length}
           </h2>
+
         </div>
 
       </div>
@@ -79,6 +94,7 @@ export default function SupplierEarnings() {
           <thead className="bg-gray-100">
 
             <tr>
+
               <th className="p-4 text-left">
                 Contractor
               </th>
@@ -94,6 +110,7 @@ export default function SupplierEarnings() {
               <th className="p-4 text-left">
                 Date
               </th>
+
             </tr>
 
           </thead>
@@ -103,12 +120,14 @@ export default function SupplierEarnings() {
             {orders.length === 0 ? (
 
               <tr>
+
                 <td
                   colSpan="4"
                   className="p-6 text-center text-gray-500"
                 >
                   No payments received yet.
                 </td>
+
               </tr>
 
             ) : (
@@ -119,6 +138,7 @@ export default function SupplierEarnings() {
                   key={order.id}
                   className="border-t"
                 >
+
                   <td className="p-4 font-semibold">
                     {order.contractorName || "Contractor"}
                   </td>
@@ -152,5 +172,7 @@ export default function SupplierEarnings() {
       </div>
 
     </div>
+
   );
+
 }

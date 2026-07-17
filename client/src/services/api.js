@@ -1,20 +1,16 @@
 import axios from "axios";
-
-const API = "http://localhost:3000";
-
+import { API_URL } from "./api";
 
 export async function runProcurement() {
-
   const response = await axios.post(
-    `${API}/procurement`,
+    `${API_URL}/procurement`,
     {
       cement: 200,
       steel: 36,
       blocks: 494,
-      budget: 6000
+      budget: 6000,
     }
   );
 
   return response.data;
-
 }

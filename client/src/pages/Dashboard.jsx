@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../api";
 
 import Header from "../components/Header";
 import StatsCard from "../components/StatsCard";
@@ -27,7 +28,7 @@ export default function Dashboard() {
     // ==========================
     // Suppliers
     // ==========================
-    fetch("http://localhost:3000/suppliers")
+    fetch(`${API_URL}/suppliers`)
       .then((response) => response.json())
       .then((data) => {
         const trusted = data.filter(
@@ -43,7 +44,7 @@ export default function Dashboard() {
     // ==========================
     // Orders
     // ==========================
-    fetch("http://localhost:3000/orders")
+    fetch(`${API_URL}/orders`)
       .then((response) => response.json())
       .then((data) => {
         const contractor = JSON.parse(
@@ -131,9 +132,7 @@ export default function Dashboard() {
       <main className="flex-1 p-8">
         <Header />
 
-        {/* Stats */}
         <div className="grid grid-cols-4 gap-6 mt-8">
-
           <StatsCard
             title="Total Orders"
             value={totalOrders}
@@ -157,10 +156,8 @@ export default function Dashboard() {
             value={`${moneySaved.toFixed(5)} USDC`}
             color="bg-orange-500"
           />
-
         </div>
 
-        {/* BOQ */}
         <div className="mt-8">
           <BOQForm
             onResult={(data) => {
@@ -169,7 +166,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Chart + AI */}
         <div className="grid grid-cols-3 gap-6 mt-8">
           <div className="col-span-2">
             <SupplierChart />
@@ -185,7 +181,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Supplier Table */}
         <div className="mt-8">
           <SupplierTable />
         </div>
