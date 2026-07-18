@@ -861,11 +861,13 @@ app.put("/contractors/:id", async (req, res) => {
 // ===============================
 
 
-app.get("/trusted-suppliers", (req, res) => {
+app.get("/trusted-suppliers", async (req, res) => {
 
-  const suppliers = getSuppliers();
+  try {
 
-  const orders = getOrders();
+    const suppliers = await Supplier.find();
+
+    const orders = await Order.find();
 
   const trustedSuppliers = suppliers
     .filter(
@@ -892,7 +894,18 @@ app.get("/trusted-suppliers", (req, res) => {
 
     });
 
-  res.json(trustedSuppliers);
+      res.json(trustedSuppliers);
+
+  } catch(error){
+
+    console.error(error);
+
+    res.status(500).json({
+      success:false,
+      message:"Failed to fetch trusted suppliers"
+    });
+
+  }
 
 });
 
@@ -907,10 +920,9 @@ app.get("/trusted-suppliers", (req, res) => {
 // ===============================
 
 
-app.post("/procurement", (req, res) => {
+app.post("/procurement", async (req, res) => {
 
-
-  const suppliers = getSuppliers();
+const suppliers = await Supplier.find();
 
 
 
