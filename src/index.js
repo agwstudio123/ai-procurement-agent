@@ -36,10 +36,7 @@ const chatsFile = path.join(
   process.cwd(),
   "src/database/chats.json"
 );
-const notificationsFile = path.join(
-  process.cwd(),
-  "src/database/notifications.json"
-);
+
 function getSuppliers() {
   return JSON.parse(
     fs.readFileSync(suppliersFile, "utf-8")
@@ -83,19 +80,10 @@ function saveOrders(orders) {
     JSON.stringify(orders, null, 2)
   );
 }
-function getNotifications() {
-  return JSON.parse(
-    fs.readFileSync(notificationsFile, "utf-8")
-  );
-}
 
 
-function saveNotifications(notifications) {
-  fs.writeFileSync(
-    notificationsFile,
-    JSON.stringify(notifications, null, 2)
-  );
-}
+
+
 
 app.get("/", (req, res) => {
   res.send("Backend running");
@@ -342,7 +330,7 @@ const newOrder = await Order.create({
     // Keep notification JSON temporarily
     await Notification.create({
   id: Date.now(),
-  userId: newOrder.supplierId,
+  userId: Number(newOrder.supplierId),
   role: "supplier",
   type: "order",
   orderId: newOrder.id,
@@ -418,94 +406,26 @@ if(req.body.paymentStatus){
   // ==========================
 // CONTRACTOR NOTIFICATIONS
 // ==========================
+console.log("STATUS RECEIVED:", req.body.status);
+console.log("ORDER CONTRACTOR ID:", order.contractorId);
+const statusMessages = {
+  Accepted: `✅ ${order.supplierName} accepted your order`,
+  Rejected: `❌ ${order.supplierName} rejected your order`,
+  Completed: `🎉 ${order.supplierName} marked your order as completed`,
+};
 
-const notifications = getNotifications();
-
-
-if (req.body.status === "Accepted") {
-
-  notifications.push({
-
+if (statusMessages[req.body.status]) {
+  await Notification.create({
     id: Date.now(),
-
-    userId: order.contractorId,
-
+    userId: Number(order.contractorId),
     role: "contractor",
-
     type: "order",
-
     orderId: order.id,
-
-    message:
-      `✅ ${order.supplierName} accepted your order`,
-
+    message: statusMessages[req.body.status],
     read: false,
-
-    createdAt:
-      new Date().toISOString(),
-
+    createdAt: new Date(),
   });
-
 }
-
-
-
-if (req.body.status === "Rejected") {
-
-  notifications.push({
-
-    id: Date.now(),
-
-    userId: order.contractorId,
-
-    role: "contractor",
-
-    type: "order",
-
-    orderId: order.id,
-
-    message:
-      `❌ ${order.supplierName} rejected your order`,
-
-    read: false,
-
-    createdAt:
-      new Date().toISOString(),
-
-  });
-
-}
-
-
-
-if (req.body.status === "Completed") {
-
-  notifications.push({
-
-    id: Date.now(),
-
-    userId: order.contractorId,
-
-    role: "contractor",
-
-    type: "order",
-
-    orderId: order.id,
-
-    message:
-      `🎉 ${order.supplierName} marked your order as completed`,
-
-    read: false,
-
-    createdAt:
-      new Date().toISOString(),
-
-  });
-
-}
-
-
-saveNotifications(notifications);
 
   // Release escrow when contractor confirms delivery
   if (req.body.status === "Completed") {
@@ -1262,7 +1182,7 @@ console.log(message);
 // CREATE CHAT NOTIFICATION
 // ==========================
 
-const notifications = getNotifications();
+
 
 console.log("ORDER FOUND:");
 console.log(order);
@@ -1295,13 +1215,15 @@ if (order) {
 
 
   if (receiverId) {
+
 console.log("Receiver ID:", receiverId);
 console.log("Receiver Role:", receiverRole);
-    notifications.push({
+
+await Notification.create({
 
   id: Date.now(),
 
-  userId: receiverId,
+  userId: Number(receiverId),
 
   role: receiverRole,
 
@@ -1310,21 +1232,17 @@ console.log("Receiver Role:", receiverRole);
   orderId: order.id,
 
   message:
-message.senderRole === "contractor"
-  ? `💬 New message from ${order.contractorName || "Contractor"}`
-  : `💬 New message from ${order.supplierName || "Supplier"}`,
+    message.senderRole === "contractor"
+      ? `💬 New message from ${order.contractorName || "Contractor"}`
+      : `💬 New message from ${order.supplierName || "Supplier"}`,
 
   read: false,
 
-  createdAt:
-    new Date().toISOString(),
+  createdAt: new Date(),
 
 });
 
-
-    saveNotifications(notifications);
-
-  }
+}
 
 }
 
@@ -1383,20 +1301,29 @@ message.senderRole === "contractor"
     // Notify Contractor
     // ==========================
 
-    const notifications = getNotifications();
+    
 
-    notifications.push({
-      id: Date.now(),
-      userId: order.contractorId,
-      role: "contractor",
-      type: "delivery_fee",
-      orderId: order.id,
-      message: `🚚 ${order.supplierName} requested a delivery fee of ${message.amount} USDC`,
-      read: false,
-      createdAt: new Date().toISOString(),
-    });
+    
+    await Notification.create({
 
-    saveNotifications(notifications);
+  id: Date.now(),
+
+  userId: Number(order.contractorId),
+
+  role: "contractor",
+
+  type: "delivery_fee",
+
+  orderId: order.id,
+
+  message:
+    `🚚 ${order.supplierName} requested a delivery fee of ${message.amount} USDC`,
+
+  read: false,
+
+  createdAt: new Date(),
+
+});
 
   }
 
