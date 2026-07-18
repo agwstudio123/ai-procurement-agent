@@ -9,7 +9,7 @@ import express from "express";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
-
+import Chat from "./models/Chat.js";
 import {
   sendUSDC,
   checkUSDCBalance,
@@ -1231,19 +1231,31 @@ app.get("/chats/:orderId", (req, res) => {
 
 
 
-app.post("/chats/:orderId", (req, res) => {
+app.post("/chats/:orderId", async (req, res) => {
 
 
   const chats = getChats();
 
-  const orders = getOrders();
+const orderId = String(req.params.orderId);
+
+console.log("URL ORDER ID:", req.params.orderId);
+console.log("NUMBER ORDER ID:", Number(req.params.orderId));
+
+const order = await Order.findOne({
+  id: Number(req.params.orderId),
+});
+
+console.log("ORDER FROM MONGODB:");
+console.log(order);
+
+const message = req.body;
 
 
-  const orderId = String(req.params.orderId);
+  
 
 
 
-  const message = req.body;
+  
 console.log("CHAT RECEIVED");
 console.log(message);
 // ==========================
@@ -1252,13 +1264,11 @@ console.log(message);
 
 const notifications = getNotifications();
 
-const order = orders.find(
-  (item) =>
-    String(item.id) === orderId
-);
 console.log("ORDER FOUND:");
 console.log(order);
-
+console.log("Supplier ID:", order.supplierId);
+console.log("Contractor ID:", order.contractorId);
+console.log("Sender Role:", message.senderRole);
 if (order) {
 
   let receiverId;
@@ -1357,32 +1367,17 @@ message.senderRole === "contractor"
   // ==========================
 
 
-  if(message.type === "delivery_fee"){
+  if (message.type === "delivery_fee") {
 
+  if (order) {
 
-    const orderIndex = orders.findIndex(
-      (order)=>
-        String(order.id) === orderId
-    );
+    order.deliveryFee = Number(message.amount);
 
+    order.totalAmount =
+      Number(order.amount || 0) +
+      Number(message.amount);
 
-
-    if(orderIndex !== -1){
-
-
-      orders[orderIndex].deliveryFee =
-        Number(message.amount);
-
-
-
-      orders[orderIndex].totalAmount =
-        Number(orders[orderIndex].amount || 0)
-        +
-        Number(message.amount);
-
-
-
-      saveOrders(orders);
+    await order.save();
 
     // ==========================
     // Notify Contractor
@@ -1392,11 +1387,11 @@ message.senderRole === "contractor"
 
     notifications.push({
       id: Date.now(),
-      userId: orders[orderIndex].contractorId,
+      userId: order.contractorId,
       role: "contractor",
       type: "delivery_fee",
-      orderId: orders[orderIndex].id,
-      message: `🚚 ${orders[orderIndex].supplierName} requested a delivery fee of ${message.amount} USDC`,
+      orderId: order.id,
+      message: `🚚 ${order.supplierName} requested a delivery fee of ${message.amount} USDC`,
       read: false,
       createdAt: new Date().toISOString(),
     });
@@ -1405,23 +1400,14 @@ message.senderRole === "contractor"
 
   }
 
-  }
+}
 
+saveChats(chats);
 
-
-
-  saveChats(chats);
-
-
-
-  res.json({
-
-  success:true,
-
+res.json({
+  success: true,
   message
-
 });
-
 });
  // ===============================
 // WALLET BALANCE
