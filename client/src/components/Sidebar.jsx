@@ -194,35 +194,33 @@ export default function Sidebar({ menuOpen, setMenuOpen }) {
 
 
 
-      <aside
+     <aside
+  className={`
+    fixed
+    top-0
+    left-0
+    h-screen
+    w-72
+    flex-shrink-0
+    bg-slate-950
+    text-white
+    flex
+    flex-col
+    shadow-lg
+    z-50
+    transform
+    transition-transform
+    duration-300
 
-        className={`
-          fixed
-          top-0
-          left-0
-         + min-h-screen
-          w-72
-          bg-slate-950
-          text-white
-          flex
-          flex-col
-          shadow-lg
-          z-50
+    ${
+      menuOpen
+        ? "translate-x-0"
+        : "-translate-x-full"
+    }
 
-          transform
-          transition-transform
-          duration-300
-
-          ${menuOpen
-            ? "translate-x-0"
-            : "-translate-x-full"
-          }
-
-          md:static
-          md:translate-x-0
-        `}
-
-      >
+    md:translate-x-0
+  `}
+>
 
 
 

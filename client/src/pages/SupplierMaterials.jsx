@@ -2,396 +2,236 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../api";
 
-export default function SupplierDashboard() {
-
+export default function SupplierMaterials() {
   const [supplier, setSupplier] = useState(null);
-  const [activeOrders, setActiveOrders] = useState(0);
-  const [earnings, setEarnings] = useState(0);
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    loadSupplier();
+  }, []);
 
-    async function loadSupplier() {
-
-      const supplierData = JSON.parse(
+  async function loadSupplier() {
+    try {
+      const currentSupplier = JSON.parse(
         localStorage.getItem("currentSupplier")
       );
 
-      if (!supplierData) return;
-
-      setSupplier(supplierData);
-
-
-      try {
-
-        const response = await fetch(
-          `${API_URL}/orders`
-        );
-
-        const orders = await response.json();
-
-
-        const supplierOrders = orders.filter(
-          (order) =>
-            Number(order.supplierId) === Number(supplierData.id)
-        );
-
-
-        const active = supplierOrders.filter(
-          (order) =>
-            order.status === "Pending" ||
-            order.status === "Accepted"
-        );
-
-
-        setActiveOrders(active.length);
-
-
-
-        const total = supplierOrders
-          .filter(
-            (order) =>
-              order.status === "Completed" &&
-              order.paymentStatus === "Paid"
-          )
-          .reduce(
-            (sum, order) =>
-              sum +
-              Number(
-                order.totalAmount ||
-                order.amount ||
-                0
-              ),
-            0
-          );
-
-
-        setEarnings(total);
-
-
-      } catch(error){
-
-        console.log(error);
-
+      if (!currentSupplier) {
+        setLoading(false);
+        return;
       }
 
+      const response = await fetch(`${API_URL}/suppliers`);
+      const suppliers = await response.json();
+
+      const latestSupplier = suppliers.find(
+        (item) => Number(item.id) === Number(currentSupplier.id)
+      );
+
+      if (latestSupplier) {
+        setSupplier(latestSupplier);
+
+        localStorage.setItem(
+          "currentSupplier",
+          JSON.stringify(latestSupplier)
+        );
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
-
-
-    loadSupplier();
-
-
-    const interval = setInterval(
-      loadSupplier,
-      5000
-    );
-
-
-    return () => clearInterval(interval);
-
-
-  }, []);
-
-
-
-  if(!supplier){
-
-    return (
-
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-
-        <div className="bg-white rounded-xl shadow p-8 text-center">
-
-          <h1 className="text-2xl font-bold">
-            No Supplier Account Found
-          </h1>
-
-
-          <Link
-            to="/supplier-register"
-            className="inline-block mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg"
-          >
-            Register Supplier
-          </Link>
-
-        </div>
-
-      </div>
-
-    );
-
   }
 
+  async function deleteMaterial(id) {
+    const confirmDelete = window.confirm(
+      "Delete this material?"
+    );
 
+    if (!confirmDelete) return;
+
+    try {
+      const updatedSupplier = {
+        ...supplier,
+        materials: supplier.materials.filter(
+          (item) => item.id !== id
+        ),
+      };
+
+      const response = await fetch(
+        `${API_URL}/suppliers/${supplier.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedSupplier),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!result.success) {
+        alert("Failed to delete material.");
+        return;
+      }
+
+      localStorage.setItem(
+        "currentSupplier",
+        JSON.stringify(updatedSupplier)
+      );
+
+      setSupplier(updatedSupplier);
+
+      alert("Material deleted successfully.");
+    } catch (error) {
+      console.log(error);
+      alert("Unable to connect to server.");
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading materials...
+      </div>
+    );
+  }
+
+  if (!supplier) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        No supplier found.
+      </div>
+    );
+  }
 
   return (
-
     <div className="min-h-screen bg-gray-100 p-4 md:p-10">
 
-
-      {/* HEADER */}
-
-      <div className="flex flex-col md:flex-row justify-between gap-5">
-
+      <div className="flex flex-col md:flex-row justify-between gap-4">
 
         <div>
-
-          <h1 className="text-2xl md:text-3xl font-bold">
-
-            🚚 Welcome {supplier.companyName}
-
+          <h1 className="text-3xl font-bold">
+            📦 My Materials
           </h1>
 
-
           <p className="text-gray-600 mt-2">
-
-            Manage your materials, orders and payments.
-
+            Manage all materials available to contractors.
           </p>
-
-
         </div>
-
-
-
-        <button
-
-          onClick={() => {
-
-            localStorage.removeItem("userType");
-            localStorage.removeItem("currentSupplier");
-
-            window.location.href="/";
-
-          }}
-
-          className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold w-full md:w-auto"
-
-        >
-
-          Logout
-
-        </button>
-
-
-      </div>
-
-
-
-
-
-      {/* STATS */}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
-
-
-        <div className="bg-white rounded-xl shadow p-6">
-
-          <p className="text-gray-500">
-            Materials Listed
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {supplier.materials?.length || 0}
-          </h2>
-
-        </div>
-
-
-
 
         <Link
-          to="/supplier-orders"
-          className="bg-white rounded-xl shadow p-6 hover:bg-blue-50"
+          to="/supplier-add-material"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-bold text-center"
         >
-
-          <p className="text-gray-500">
-            Active Orders
-          </p>
-
-
-          <h2 className="text-3xl font-bold mt-2 text-blue-600">
-            {activeOrders}
-          </h2>
-
-
-          <p className="text-blue-600 mt-2">
-            View Orders →
-          </p>
-
+          + Add Material
         </Link>
 
-
-
-
-
-        <div className="bg-white rounded-xl shadow p-6">
-
-          <p className="text-gray-500">
-            Earnings
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {earnings.toFixed(2)} USDC
-          </h2>
-
-        </div>
-
-
-
-
-
-        <div className="bg-white rounded-xl shadow p-6">
-
-          <p className="text-gray-500">
-            Trust Score
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            ⭐ {supplier.trustScore || 95}
-          </h2>
-
-        </div>
-
-
       </div>
 
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {supplier.materials && supplier.materials.length > 0 ? (
 
-
-
-
-      {/* PROFILE */}
-
-      <div className="bg-white rounded-xl shadow p-5 md:p-6 mt-8">
-
-
-        <div className="flex flex-col sm:flex-row justify-between gap-3">
-
-
-          <h2 className="text-xl font-bold">
-            Company Profile
-          </h2>
-
-
-          <Link
-            to="/supplier-profile"
-            className="text-blue-600 font-semibold"
-          >
-
-            ✏️ Edit Profile
-
-          </Link>
-
-
-        </div>
-
-
-        <div className="space-y-3 mt-5 break-words">
-
-
-          <p>
-            <strong>Company:</strong> {supplier.companyName}
-          </p>
-
-
-          <p>
-            <strong>Owner:</strong> {supplier.ownerName}
-          </p>
-
-
-          <p>
-            <strong>Location:</strong> {supplier.location}
-          </p>
-
-
-          <p>
-            <strong>Wallet:</strong> {supplier.wallet}
-          </p>
-
-
-        </div>
-
-
-      </div>
-
-
-
-
-
-      {/* MATERIALS */}
-
-      <div className="bg-white rounded-xl shadow p-5 md:p-6 mt-8">
-
-
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
-
-
-          <h2 className="text-xl font-bold">
-            My Materials
-          </h2>
-
-
-          <Link
-            to="/supplier-materials"
-            className="bg-blue-600 text-white px-5 py-3 rounded-lg text-center"
-          >
-
-            Manage Materials
-
-          </Link>
-
-
-        </div>
-
-
-
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
-
-
-          {supplier.materials?.map((item)=>(
-
+          supplier.materials.map((item) => (
 
             <div
               key={item.id}
-              className="border rounded-xl p-4"
+              className="bg-white rounded-xl shadow p-6"
             >
 
-              <h3 className="text-lg font-bold">
-                {item.name}
-              </h3>
+              <div className="flex justify-between items-start">
 
+                <div>
 
-              <p>
-                {item.quantity} {item.unit}
-              </p>
+                  <h2 className="text-xl font-bold">
+                    {item.name}
+                  </h2>
 
+                  <p className="text-gray-500 mt-1">
+                    {item.category}
+                  </p>
 
-              <p className="font-semibold text-blue-600">
-                {item.price} USDC
-              </p>
+                </div>
 
+                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                  {item.status || "Available"}
+                </span>
 
-              <p className="mt-3 text-green-600 font-semibold">
-                ✅ Available
-              </p>
+              </div>
 
+              <div className="mt-5 space-y-2">
+
+                <p>
+                  <strong>Quantity:</strong>{" "}
+                  {item.quantity} {item.unit}
+                </p>
+
+                <p>
+                  <strong>Price:</strong>{" "}
+                  {Number(item.price).toFixed(2)} USDC
+                </p>
+
+                <p>
+                  <strong>Location:</strong>{" "}
+                  {item.location || supplier.location}
+                </p>
+
+                <p className="break-all">
+                  <strong>Wallet:</strong>{" "}
+                  {item.wallet || supplier.wallet || "Not provided"}
+                </p>
+
+              </div>
+
+              <div className="mt-6 flex gap-3">
+
+                <Link
+  to={`/supplier-add-material/${item.id}`}
+  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-lg font-semibold"
+>
+  Edit
+</Link>
+
+                <button
+                  onClick={() => deleteMaterial(item.id)}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold"
+                >
+                  Delete
+                </button>
+
+              </div>
 
             </div>
 
+          ))
 
-          ))}
+        ) : (
 
+          <div className="col-span-full bg-white rounded-xl shadow p-10 text-center">
 
-        </div>
+            <h2 className="text-2xl font-bold">
+              No Materials Added
+            </h2>
 
+            <p className="text-gray-500 mt-3">
+              Start by adding your first construction material.
+            </p>
+
+            <Link
+              to="/supplier-add-material"
+              className="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-bold"
+            >
+              Add Material
+            </Link>
+
+          </div>
+
+        )}
 
       </div>
 
-
-
     </div>
-
   );
-
 }

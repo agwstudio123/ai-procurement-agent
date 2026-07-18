@@ -1,3 +1,10 @@
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import Supplier from "./models/Supplier.js";
+import Contractor from "./models/Contractor.js";
+import Order from "./models/Order.js";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import fs from "fs";
@@ -101,74 +108,97 @@ app.get("/", (req, res) => {
 // ===============================
 
 
-app.get("/suppliers", (req, res) => {
-  res.json(getSuppliers());
-});
+app.get("/suppliers", async (req, res) => {
 
+  try {
 
-app.post("/suppliers", (req, res) => {
+    const suppliers = await Supplier.find();
 
-  console.log("NEW SUPPLIER RECEIVED:");
-  console.log(req.body);
+    res.json(suppliers);
 
-  const suppliers = getSuppliers();
+  } catch (error) {
 
-  suppliers.push(req.body);
+    console.error(error);
 
-
-  fs.writeFileSync(
-    suppliersFile,
-    JSON.stringify(suppliers, null, 2)
-  );
-
-
-  res.json({
-    success: true,
-    message: "Supplier added successfully",
-    supplier: req.body,
-  });
-
-});
-
-
-
-app.put("/suppliers/:id", (req, res) => {
-
-  const suppliers = getSuppliers();
-
-  const supplierId = Number(req.params.id);
-
-
-  const index = suppliers.findIndex(
-    (supplier) =>
-      Number(supplier.id) === supplierId
-  );
-
-
-  if (index === -1) {
-
-    return res.json({
+    res.status(500).json({
       success: false,
-      message: "Supplier not found",
+      message: "Failed to fetch suppliers"
     });
 
   }
 
-
-  suppliers[index] = req.body;
-
-
-  fs.writeFileSync(
-    suppliersFile,
-    JSON.stringify(suppliers, null, 2)
-  );
+});
 
 
-  res.json({
-    success: true,
-    message: "Supplier updated successfully",
-    supplier: req.body,
-  });
+app.post("/suppliers", async (req, res) => {
+
+  console.log("NEW SUPPLIER RECEIVED:");
+  console.log(req.body);
+
+  try {
+
+    const supplier = await Supplier.create(req.body);
+
+    res.json({
+      success: true,
+      message: "Supplier added successfully",
+      supplier,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to add supplier",
+    });
+
+  }
+
+});
+
+
+app.put("/suppliers/:id", async (req, res) => {
+
+  try {
+
+    const supplierId = Number(req.params.id);
+
+    const supplier = await Supplier.findOneAndUpdate(
+      { id: supplierId },
+      req.body,
+      { new: true }
+    );
+
+
+    if (!supplier) {
+
+      return res.json({
+        success: false,
+        message: "Supplier not found",
+      });
+
+    }
+
+
+    res.json({
+      success: true,
+      message: "Supplier updated successfully",
+      supplier,
+    });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update supplier",
+    });
+
+  }
 
 });
 
@@ -181,124 +211,191 @@ app.put("/suppliers/:id", (req, res) => {
 // ===============================
 
 
-app.get("/orders", (req, res) => {
+app.get("/orders", async (req, res) => {
 
-  res.json(getOrders());
+  try {
 
-});
+    const orders = await Order.find();
 
-
-
-
-app.post("/orders", (req, res) => {
-console.log("POST /orders called");
-console.log(req.body);
-  const orders = getOrders();
+    res.json(orders);
 
 
-  const duplicate = orders.find(
-    (order) =>
-      order.contractorId === req.body.contractorId &&
-      order.supplierId === req.body.supplierId &&
-      order.status === "Pending"
-  );
+  } catch (error) {
 
+    console.error(error);
 
-  if (duplicate) {
+    res.status(500).json({
 
-    return res.json({
       success: false,
-      message: "Pending order already exists.",
+
+      message: "Failed to fetch orders",
+
     });
 
   }
 
-
-
- const marketPrice = Number(
-  req.body.marketPrice || req.body.amount || 0
-);
-
-const orderAmount = Number(
-  req.body.amount || req.body.totalAmount || 0
-);
-
-
-const savings = marketPrice - orderAmount;
+});
 
 
 
-const newOrder = {
 
-    id: Date.now(),
+app.post("/orders", async (req, res) => {
+  console.log("ORDER ROUTE HIT");
+console.log(req.body);
 
-    ...req.body,
+  try {
 
-    amount: orderAmount,
-
-    totalAmount:
-      req.body.totalAmount || orderAmount,
-
-    marketPrice,
-
-    savings:
-      savings > 0 ? savings : 0,
-
-    status: "Pending",
-
-    paymentStatus:
-      req.body.paymentStatus || "Unpaid",
-
-    createdAt:
-      new Date().toISOString(),
-
-};
+    console.log("POST /orders called");
+    console.log(req.body);
 
 
+    const duplicate = await Order.findOne({
 
-  orders.push(newOrder);
-console.log("Order saved");
-console.log(newOrder);
-saveOrders(orders);
+      contractorId: req.body.contractorId,
 
-console.log(newOrder);
+      supplierId: req.body.supplierId,
 
-const notifications = getNotifications();
+      status: "Pending"
 
-notifications.push({
+    });
+
+
+    if (duplicate) {
+
+      return res.json({
+
+        success: false,
+
+        message: "Pending order already exists.",
+
+      });
+
+    }
+
+
+
+    const marketPrice = Number(
+      req.body.marketPrice || req.body.amount || 0
+    );
+
+
+    const orderAmount = Number(
+      req.body.amount || req.body.totalAmount || 0
+    );
+
+
+    const savings = marketPrice - orderAmount;
+
+
+
+    const contractor = await Contractor.findOne({
+  id: Number(req.body.contractorId)
+});
+
+
+const supplier = await Supplier.findOne({
+  id: Number(req.body.supplierId)
+});
+
+
+const newOrder = await Order.create({
 
   id: Date.now(),
 
-  userId: newOrder.supplierId,
+  ...req.body,
 
-  role: "supplier",
 
-  type: "order",
+  contractorWallet:
+    contractor?.wallet || "",
 
-  orderId: newOrder.id,
 
-  message:
-    `New order received from ${newOrder.contractorName || "Contractor"}`,
+  supplierWallet:
+    supplier?.wallet || "",
 
-  read: false,
+      amount: orderAmount,
 
-  createdAt:
-    new Date().toISOString(),
+      totalAmount:
+        req.body.totalAmount || orderAmount,
 
-});
-console.log("Notification created:");
-console.log(notifications);
-saveNotifications(notifications);
+      marketPrice,
 
-  res.json({
+      savings:
+        savings > 0 ? savings : 0,
 
-    success: true,
+      status: "Pending",
 
-    message: "Order placed successfully.",
+      paymentStatus:
+        req.body.paymentStatus || "Unpaid",
 
-    order: newOrder,
+      createdAt:
+        new Date().toISOString(),
 
-  });
+    });
+
+
+
+    console.log("Order saved to MongoDB");
+    console.log(newOrder);
+
+
+
+    // Keep notification JSON temporarily
+    const notifications = getNotifications();
+
+
+    notifications.push({
+
+      id: Date.now(),
+
+      userId: newOrder.supplierId,
+
+      role: "supplier",
+
+      type: "order",
+
+      orderId: newOrder.id,
+
+      message:
+        `New order received from ${newOrder.contractorName || "Contractor"}`,
+
+      read: false,
+
+      createdAt:
+        new Date().toISOString(),
+
+    });
+
+
+    saveNotifications(notifications);
+
+
+
+    res.json({
+
+      success: true,
+
+      message: "Order placed successfully.",
+
+      order: newOrder,
+
+    });
+
+
+
+  } catch (error) {
+
+    console.error(error);
+
+
+    res.status(500).json({
+
+      success: false,
+
+      message: "Failed to create order",
+
+    });
+
+  }
 
 });
 
@@ -309,33 +406,31 @@ saveNotifications(notifications);
 // UPDATE ORDER STATUS + PAYMENT
 app.put("/orders/:id", async (req, res) => {
 
-  const orders = getOrders();
-
   const orderId = Number(req.params.id);
 
-  const index = orders.findIndex(
-    (order) => Number(order.id) === orderId
-  );
+const order = await Order.findOne({
+  id: orderId
+});
 
-  if (index === -1) {
-    return res.json({
-      success: false,
-      message: "Order not found",
-    });
-  }
+
+if (!order) {
+
+  return res.json({
+    success: false,
+    message: "Order not found",
+  });
+
+}
 
   // Update status/payment status
-  orders[index] = {
-    ...orders[index],
+  if(req.body.status){
+  order.status = req.body.status;
+}
 
-    ...(req.body.status && {
-      status: req.body.status,
-    }),
 
-    ...(req.body.paymentStatus && {
-      paymentStatus: req.body.paymentStatus,
-    }),
-  };
+if(req.body.paymentStatus){
+  order.paymentStatus = req.body.paymentStatus;
+}
 
   // ==========================
 // CONTRACTOR NOTIFICATIONS
@@ -343,44 +438,89 @@ app.put("/orders/:id", async (req, res) => {
 
 const notifications = getNotifications();
 
+
 if (req.body.status === "Accepted") {
+
   notifications.push({
+
     id: Date.now(),
-    userId: orders[index].contractorId,
+
+    userId: order.contractorId,
+
     role: "contractor",
+
     type: "order",
-    orderId: orders[index].id,
-    message: `✅ ${orders[index].supplierName} accepted your order`,
+
+    orderId: order.id,
+
+    message:
+      `✅ ${order.supplierName} accepted your order`,
+
     read: false,
-    createdAt: new Date().toISOString(),
+
+    createdAt:
+      new Date().toISOString(),
+
   });
+
 }
+
+
 
 if (req.body.status === "Rejected") {
+
   notifications.push({
+
     id: Date.now(),
-    userId: orders[index].contractorId,
+
+    userId: order.contractorId,
+
     role: "contractor",
+
     type: "order",
-    orderId: orders[index].id,
-    message: `❌ ${orders[index].supplierName} rejected your order`,
+
+    orderId: order.id,
+
+    message:
+      `❌ ${order.supplierName} rejected your order`,
+
     read: false,
-    createdAt: new Date().toISOString(),
+
+    createdAt:
+      new Date().toISOString(),
+
   });
+
 }
 
+
+
 if (req.body.status === "Completed") {
+
   notifications.push({
+
     id: Date.now(),
-    userId: orders[index].contractorId,
+
+    userId: order.contractorId,
+
     role: "contractor",
+
     type: "order",
-    orderId: orders[index].id,
-    message: `🎉 ${orders[index].supplierName} marked your order as completed`,
+
+    orderId: order.id,
+
+    message:
+      `🎉 ${order.supplierName} marked your order as completed`,
+
     read: false,
-    createdAt: new Date().toISOString(),
+
+    createdAt:
+      new Date().toISOString(),
+
   });
+
 }
+
 
 saveNotifications(notifications);
 
@@ -393,9 +533,11 @@ saveNotifications(notifications);
   orders[index].totalAmount || orders[index].amount
 );
 
-      orders[index].paymentStatus = "Paid";
-      orders[index].transactionId = payment.id;
-      orders[index].releasedAt = new Date().toISOString();
+      order.paymentStatus = "Paid";
+
+order.transactionId = payment.id;
+
+order.releasedAt = new Date().toISOString();
 
     } catch (error) {
 
@@ -415,13 +557,13 @@ saveNotifications(notifications);
     }
   }
 
-  saveOrders(orders);
+  await order.save();
 
-  res.json({
-    success: true,
-    message: "Order updated successfully",
-    order: orders[index],
-  });
+res.json({
+  success:true,
+  message:"Order updated successfully",
+  order
+});
 
 });
 
@@ -474,40 +616,57 @@ app.put("/notifications/:userId/read", (req, res) => {
 // ===============================
 
 // Update contractor wallet
-app.put("/contractors/:id/wallet", (req, res) => {
+app.put("/contractors/:id/wallet", async (req, res) => {
 
-  console.log("Wallet route reached");
-  console.log("Params:", req.params);
-  console.log("Body:", req.body);
+  try {
 
-  const contractors = getContractors();
+    const contractor = await Contractor.findOneAndUpdate(
+      {
+        id: Number(req.params.id)
+      },
+      {
+        wallet: req.body.wallet
+      },
+      {
+        new: true
+      }
+    );
 
-  const contractorId = Number(req.params.id);
 
-  
+    if (!contractor) {
 
-  const index = contractors.findIndex(
-    (contractor) =>
-      Number(contractor.id) === contractorId
-  );
+      return res.json({
+        success: false,
+        message: "Contractor not found",
+      });
 
-  if (index === -1) {
-    return res.json({
-      success: false,
-      message: "Contractor not found",
+    }
+
+
+    res.json({
+
+      success: true,
+
+      message: "Wallet updated successfully",
+
+      contractor,
+
     });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+
+      success: false,
+
+      message: "Failed to update wallet",
+
+    });
+
   }
-
-  contractors[index].wallet =
-    req.body.wallet;
-
-  saveContractors(contractors);
-
-  res.json({
-    success: true,
-    message: "Wallet updated successfully",
-    contractor: contractors[index],
-  });
 
 });
 
@@ -516,111 +675,184 @@ app.put("/contractors/:id/wallet", (req, res) => {
 // ===============================
 
 // Register Contractor
-app.post("/contractors/register", (req, res) => {
+app.post("/contractors/register", async (req, res) => {
 
-  const contractors = getContractors();
+  try {
 
-  const {
-    companyName,
-    ownerName,
-    email,
-    password,
-    location,
-    wallet,
-  } = req.body;
+    const {
+      companyName,
+      ownerName,
+      email,
+      password,
+      location,
+      wallet,
+    } = req.body;
 
-  const existing = contractors.find(
-    contractor =>
-      contractor.email.toLowerCase() === email.toLowerCase()
-  );
 
-  if (existing) {
-    return res.json({
-      success: false,
-      message: "Email already exists.",
+    const existing = await Contractor.findOne({
+      email: email.toLowerCase()
     });
+
+
+    if (existing) {
+
+      return res.json({
+        success: false,
+        message: "Email already exists.",
+      });
+
+    }
+
+
+    const newContractor = await Contractor.create({
+
+      id: Date.now(),
+
+      companyName,
+
+      ownerName,
+
+      email,
+
+      password,
+
+      location,
+
+      wallet: wallet || "",
+
+      trustScore: 95,
+
+    });
+
+
+    res.json({
+
+      success: true,
+
+      contractor: newContractor,
+
+    });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+
+      success: false,
+
+      message: "Failed to register contractor",
+
+    });
+
   }
-
-  const newContractor = {
-    id: Date.now(),
-    companyName,
-    ownerName,
-    email,
-    password,
-    location,
-    wallet: wallet || "",
-    trustScore: 95,
-  };
-
-  contractors.push(newContractor);
-
-  saveContractors(contractors);
-
-  res.json({
-    success: true,
-    contractor: newContractor,
-  });
 
 });
 
 
 // Get all contractors
-app.get("/contractors", (req, res) => {
+app.get("/contractors", async (req, res) => {
 
-  res.json(getContractors());
+  try {
+
+    const contractors = await Contractor.find();
+
+    res.json(contractors);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch contractors",
+    });
+
+  }
 
 });
 
 
 // Get contractor by ID
-app.get("/contractors/:id", (req, res) => {
+app.get("/contractors/:id", async (req, res) => {
 
-  const contractors = getContractors();
+  try {
 
-  const contractor = contractors.find(
-    contractor => Number(contractor.id) === Number(req.params.id)
-  );
-
-  if (!contractor) {
-    return res.json({
-      success: false,
-      message: "Contractor not found",
+    const contractor = await Contractor.findOne({
+      id: Number(req.params.id)
     });
-  }
 
-  res.json(contractor);
+
+    if (!contractor) {
+
+      return res.json({
+        success: false,
+        message: "Contractor not found",
+      });
+
+    }
+
+
+    res.json(contractor);
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch contractor",
+    });
+
+  }
 
 });
 
 
 // Update contractor
-app.put("/contractors/:id", (req, res) => {
+app.put("/contractors/:id", async (req, res) => {
 
-  const contractors = getContractors();
+  try {
 
-  const index = contractors.findIndex(
-    contractor => Number(contractor.id) === Number(req.params.id)
-  );
+    const contractor = await Contractor.findOneAndUpdate(
+      {
+        id: Number(req.params.id)
+      },
+      req.body,
+      {
+        new: true
+      }
+    );
 
-  if (index === -1) {
-    return res.json({
-      success: false,
-      message: "Contractor not found",
+
+    if (!contractor) {
+
+      return res.json({
+        success: false,
+        message: "Contractor not found",
+      });
+
+    }
+
+
+    res.json({
+      success: true,
+      contractor,
     });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update contractor",
+    });
+
   }
-
-  contractors[index] = {
-    ...contractors[index],
-    ...req.body,
-    id: contractors[index].id,
-  };
-
-  saveContractors(contractors);
-
-  res.json({
-    success: true,
-    contractor: contractors[index],
-  });
 
 });
 
@@ -1743,6 +1975,27 @@ Try asking:
 
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+
+    console.log("✅ MongoDB Connected");
+
+    console.log(
+      "CONNECTED DATABASE:",
+      mongoose.connection.name
+    );
+
+    app.listen(3000, () => {
+      console.log("Server running on port 3000");
+    });
+
+  })
+  .catch((err) => {
+
+    console.error(
+      "MongoDB Error:",
+      err
+    );
+
+  });

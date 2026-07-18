@@ -1,48 +1,42 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { Outlet } from "react-router-dom";
 import background from "../assets/background.png";
 
 export default function Layout() {
-
   const [menuOpen, setMenuOpen] = useState(false);
 
-
   return (
-
-    <div className="flex min-h-screen h-screen">
-
-
+    <div className="min-h-screen bg-gray-100">
+      {/* Sidebar */}
       <Sidebar
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
       />
 
-
+      {/* Main Content */}
       <main
-        className="flex-1 overflow-y-auto w-full"
+        className="
+          min-h-screen
+          overflow-y-auto
+          transition-all
+          duration-300
+          md:ml-72
+        "
         style={{
           backgroundImage: `url(${background})`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
-          minHeight: "100vh",
         }}
       >
+        <Header setMenuOpen={setMenuOpen} />
 
-        <Header
-          setMenuOpen={setMenuOpen}
-        />
-
-
-        <Outlet />
-
+        <div className="p-4 md:p-6">
+          <Outlet />
+        </div>
       </main>
-
-
     </div>
-
   );
-
 }

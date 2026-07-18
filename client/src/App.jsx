@@ -562,9 +562,10 @@ export default function App() {
           />
           <Route path="/supplier-materials" element={<SupplierMaterials />} />
           <Route
-            path="/supplier-add-material"
-            element={<SupplierAddMaterial />}
-          />
+  path="/supplier-add-material/:id?"
+  element={<SupplierAddMaterial />}
+/>
+          
           <Route path="/supplier-profile" element={<SupplierProfile />} />
           <Route path="/supplier-orders" element={<SupplierOrders />} />
         </Route>

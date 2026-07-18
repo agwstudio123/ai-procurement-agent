@@ -72,7 +72,7 @@ export default function BOQForm({ onResult }) {
 
 
   async function placeOrder(){
-
+console.log("PLACE ORDER CLICKED");
     if(!result || !result.supplier){
       return;
     }
@@ -86,12 +86,38 @@ export default function BOQForm({ onResult }) {
 
     const order = {
 
-      supplierId: result.supplier.id,
 
-      supplierName: result.supplier.name,
+      // SUPPLIER DETAILS
+
+      supplierId:
+        result.supplier.id,
+
+
+      supplierName:
+        result.supplier.name,
+
+
+      supplierWallet:
+        result.supplier.walletAddress || "",
+
+
+
+      // CONTRACTOR DETAILS
 
       contractorId:
         contractor?.id || 1,
+
+
+      contractorName:
+        contractor?.companyName || 
+        contractor?.ownerName ||
+        "Contractor",
+
+
+      contractorWallet:
+        contractor?.wallet || "",
+
+
 
 
       materials: {
@@ -105,12 +131,14 @@ export default function BOQForm({ onResult }) {
       },
 
 
+
       amount:
         result.supplier.totalCost,
 
 
       totalAmount:
         result.supplier.totalCost,
+
 
 
       marketPrice:
@@ -120,11 +148,15 @@ export default function BOQForm({ onResult }) {
       savings:
         result.savings,
 
-
-      walletAddress:
-        result.supplier.walletAddress,
-
     };
+
+
+
+    console.log(
+      "ORDER SENT:",
+      order
+    );
+
 
 
     try{
