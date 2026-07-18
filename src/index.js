@@ -4,7 +4,7 @@ import Supplier from "./models/Supplier.js";
 import Contractor from "./models/Contractor.js";
 import Order from "./models/Order.js";
 dotenv.config();
-
+import Notification from "./models/Notification.js";
 import express from "express";
 import cors from "cors";
 import fs from "fs";
@@ -340,33 +340,16 @@ const newOrder = await Order.create({
 
 
     // Keep notification JSON temporarily
-    const notifications = getNotifications();
-
-
-    notifications.push({
-
-      id: Date.now(),
-
-      userId: newOrder.supplierId,
-
-      role: "supplier",
-
-      type: "order",
-
-      orderId: newOrder.id,
-
-      message:
-        `New order received from ${newOrder.contractorName || "Contractor"}`,
-
-      read: false,
-
-      createdAt:
-        new Date().toISOString(),
-
-    });
-
-
-    saveNotifications(notifications);
+    await Notification.create({
+  id: Date.now(),
+  userId: newOrder.supplierId,
+  role: "supplier",
+  type: "order",
+  orderId: newOrder.id,
+  message: `New order received from ${newOrder.contractorName || "Contractor"}`,
+  read: false,
+  createdAt: new Date(),
+});
 
 
 
@@ -573,41 +556,57 @@ res.json({
 // ===============================
 
 // Get notifications
-app.get("/notifications/:userId", (req, res) => {
+app.get("/notifications/:userId", async (req, res) => {
 
-  const notifications = getNotifications();
+  try {
 
-  const userNotifications = notifications.filter(
-    (notification) =>
-      Number(notification.userId) ===
-      Number(req.params.userId)
-  );
+    const notifications = await Notification.find({
+      userId: Number(req.params.userId),
+    }).sort({ createdAt: -1 });
 
-  res.json(userNotifications);
+    res.json(notifications);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch notifications",
+    });
+
+  }
 
 });
 
 // Mark notifications as read
-app.put("/notifications/:userId/read", (req, res) => {
+app.put("/notifications/:userId/read", async (req, res) => {
 
-  const notifications = getNotifications();
+  try {
 
-  notifications.forEach((notification) => {
+    await Notification.updateMany(
+      {
+        userId: Number(req.params.userId),
+      },
+      {
+        read: true,
+      }
+    );
 
-    if (
-      Number(notification.userId) ===
-      Number(req.params.userId)
-    ) {
-      notification.read = true;
-    }
+    res.json({
+      success: true,
+    });
 
-  });
+  } catch (error) {
 
-  saveNotifications(notifications);
+    console.error(error);
 
-  res.json({
-    success: true,
-  });
+    res.status(500).json({
+      success: false,
+      message: "Failed to update notifications",
+    });
+
+  }
 
 });
 
@@ -1245,7 +1244,8 @@ app.post("/chats/:orderId", (req, res) => {
 
 
   const message = req.body;
-
+console.log("CHAT RECEIVED");
+console.log(message);
 // ==========================
 // CREATE CHAT NOTIFICATION
 // ==========================
@@ -1256,7 +1256,8 @@ const order = orders.find(
   (item) =>
     String(item.id) === orderId
 );
-
+console.log("ORDER FOUND:");
+console.log(order);
 
 if (order) {
 
@@ -1284,7 +1285,8 @@ if (order) {
 
 
   if (receiverId) {
-
+console.log("Receiver ID:", receiverId);
+console.log("Receiver Role:", receiverRole);
     notifications.push({
 
   id: Date.now(),
