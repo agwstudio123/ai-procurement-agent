@@ -529,8 +529,8 @@ saveNotifications(notifications);
     try {
 
       const payment = await sendUSDC(
-  orders[index].supplierWallet || orders[index].walletAddress,
-  orders[index].totalAmount || orders[index].amount
+  order.supplierWallet,
+  order.totalAmount || order.amount
 );
 
       order.paymentStatus = "Paid";
