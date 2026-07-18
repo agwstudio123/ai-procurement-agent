@@ -16,7 +16,10 @@ export default function SupplierMaterials() {
         localStorage.getItem("currentSupplier")
       );
 
+      console.log("Current Supplier:", currentSupplier);
+
       if (!currentSupplier) {
+        console.log("No currentSupplier found in localStorage.");
         setLoading(false);
         return;
       }
@@ -24,9 +27,14 @@ export default function SupplierMaterials() {
       const response = await fetch(`${API_URL}/suppliers`);
       const suppliers = await response.json();
 
+      console.log("All Suppliers:", suppliers);
+      console.log("Current Supplier ID:", currentSupplier.id);
+
       const latestSupplier = suppliers.find(
         (item) => Number(item.id) === Number(currentSupplier.id)
       );
+
+      console.log("Matched Supplier:", latestSupplier);
 
       if (latestSupplier) {
         setSupplier(latestSupplier);
@@ -35,11 +43,13 @@ export default function SupplierMaterials() {
           "currentSupplier",
           JSON.stringify(latestSupplier)
         );
+      } else {
+        console.log("Supplier NOT found in database.");
       }
 
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log("LOAD SUPPLIER ERROR:", error);
       setLoading(false);
     }
   }
@@ -109,9 +119,7 @@ export default function SupplierMaterials() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-10">
-
       <div className="flex flex-col md:flex-row justify-between gap-4">
-
         <div>
           <h1 className="text-3xl font-bold">
             📦 My Materials
@@ -128,23 +136,17 @@ export default function SupplierMaterials() {
         >
           + Add Material
         </Link>
-
       </div>
 
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {supplier.materials && supplier.materials.length > 0 ? (
-
+        {supplier.materials && supplier.materials.length > 0 ? (
           supplier.materials.map((item) => (
-
             <div
               key={item.id}
               className="bg-white rounded-xl shadow p-6"
             >
-
               <div className="flex justify-between items-start">
-
                 <div>
-
                   <h2 className="text-xl font-bold">
                     {item.name}
                   </h2>
@@ -152,17 +154,14 @@ export default function SupplierMaterials() {
                   <p className="text-gray-500 mt-1">
                     {item.category}
                   </p>
-
                 </div>
 
                 <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
                   {item.status || "Available"}
                 </span>
-
               </div>
 
               <div className="mt-5 space-y-2">
-
                 <p>
                   <strong>Quantity:</strong>{" "}
                   {item.quantity} {item.unit}
@@ -182,17 +181,15 @@ export default function SupplierMaterials() {
                   <strong>Wallet:</strong>{" "}
                   {item.wallet || supplier.wallet || "Not provided"}
                 </p>
-
               </div>
 
               <div className="mt-6 flex gap-3">
-
                 <Link
-  to={`/supplier-add-material/${item.id}`}
-  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-lg font-semibold"
->
-  Edit
-</Link>
+                  to={`/supplier-add-material/${item.id}`}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-lg font-semibold"
+                >
+                  Edit
+                </Link>
 
                 <button
                   onClick={() => deleteMaterial(item.id)}
@@ -200,17 +197,11 @@ export default function SupplierMaterials() {
                 >
                   Delete
                 </button>
-
               </div>
-
             </div>
-
           ))
-
         ) : (
-
           <div className="col-span-full bg-white rounded-xl shadow p-10 text-center">
-
             <h2 className="text-2xl font-bold">
               No Materials Added
             </h2>
@@ -225,13 +216,9 @@ export default function SupplierMaterials() {
             >
               Add Material
             </Link>
-
           </div>
-
         )}
-
       </div>
-
     </div>
   );
 }
