@@ -125,7 +125,12 @@ app.post("/suppliers", async (req, res) => {
 
   try {
 
-    const supplier = await Supplier.create(req.body);
+    const supplier = await Supplier.create({
+      ...req.body,
+      id: Date.now(),
+      trusted: true,
+      trustScore: 95,
+    });
 
     res.json({
       success: true,
