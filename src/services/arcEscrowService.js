@@ -1,66 +1,60 @@
 import { ethers } from "ethers";
 
-const CONTRACT_ADDRESS =
-"0x90bd982FaC935EF9D4a8879fC4bFC85D9501659B";
-
+const CONTRACT_ADDRESS = process.env.ARC_ESCROW_ADDRESS;
 
 const ABI = [
   {
-    "inputs":[
+    "inputs": [
       {
-        "internalType":"address",
-        "name":"_supplier",
-        "type":"address"
+        "internalType": "address",
+        "name": "_supplier",
+        "type": "address"
       }
     ],
-    "name":"createOrder",
-    "outputs":[
+    "name": "createOrder",
+    "outputs": [
       {
-        "internalType":"uint256",
-        "name":"",
-        "type":"uint256"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "stateMutability":"nonpayable",
-    "type":"function"
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ];
 
 
 export async function createEscrowOrder(
   supplierAddress
-){
+) {
 
-const provider =
-new ethers.JsonRpcProvider(
-"https://rpc.testnet.arc.network"
-);
-
-
-const wallet =
-new ethers.Wallet(
-process.env.PRIVATE_KEY,
-provider
-);
+  const provider = new ethers.JsonRpcProvider(
+    "https://rpc.testnet.arc.network"
+  );
 
 
-const contract =
-new ethers.Contract(
-CONTRACT_ADDRESS,
-ABI,
-wallet
-);
+  const wallet = new ethers.Wallet(
+    process.env.PRIVATE_KEY,
+    provider
+  );
 
 
-const tx =
-await contract.createOrder(
-supplierAddress
-);
+  const contract = new ethers.Contract(
+    CONTRACT_ADDRESS,
+    ABI,
+    wallet
+  );
 
 
-await tx.wait();
+  const tx = await contract.createOrder(
+    supplierAddress
+  );
 
 
-return tx.hash;
+  await tx.wait();
+
+
+  return tx.hash;
 
 }
