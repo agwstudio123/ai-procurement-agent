@@ -14,6 +14,9 @@ import {
   sendUSDC,
   checkUSDCBalance,
 } from "./services/circleService.js";
+import {
+  createEscrowOrder
+} from "./services/arcEscrowService.js";
 const app = express();
 
 app.use(cors());
@@ -329,7 +332,36 @@ const newOrder = await Order.create({
 
     console.log("Order saved to MongoDB");
     console.log(newOrder);
+// CREATE ARC ESCROW ORDER
+try {
 
+  if (newOrder.supplierWallet) {
+
+    const escrowTx =
+      await createEscrowOrder(
+        newOrder.supplierWallet
+      );
+
+    newOrder.escrowTransaction =
+      escrowTx;
+
+    await newOrder.save();
+
+    console.log(
+      "Arc escrow created:",
+      escrowTx
+    );
+
+  }
+
+} catch(error){
+
+  console.error(
+    "Escrow creation failed:",
+    error.message
+  );
+
+}
 
 
     // Keep notification JSON temporarily
