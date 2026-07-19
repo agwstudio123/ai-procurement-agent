@@ -36,9 +36,17 @@ export async function createEscrowOrder(
     CONTRACT_ADDRESS
   );
 
+
   const provider =
     new ethers.JsonRpcProvider(
-      "https://rpc.testnet.arc.network"
+      "https://rpc.testnet.arc.network",
+      {
+        name: "arcTestnet",
+        chainId: 5042002
+      },
+      {
+        staticNetwork: true
+      }
     );
 
 
@@ -64,6 +72,12 @@ export async function createEscrowOrder(
 
 
   await tx.wait();
+
+
+  console.log(
+    "ARC ESCROW TX:",
+    tx.hash
+  );
 
 
   return tx.hash;
