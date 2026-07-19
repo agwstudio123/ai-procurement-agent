@@ -39,13 +39,10 @@ export async function createEscrowOrder(
 
   const provider =
     new ethers.JsonRpcProvider(
-      "https://rpc.testnet.arc.network",
+      "https://rpc.drpc.testnet.arc.network",
       {
         name: "arcTestnet",
         chainId: 5042002
-      },
-      {
-        staticNetwork: true
       }
     );
 
@@ -65,7 +62,7 @@ export async function createEscrowOrder(
     );
 
 
-  // Prevent Arc RPC rate-limit errors
+  // Prevent rapid RPC requests
   await new Promise(
     resolve => setTimeout(resolve, 3000)
   );
