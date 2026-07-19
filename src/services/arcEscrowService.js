@@ -65,6 +65,12 @@ export async function createEscrowOrder(
     );
 
 
+  // Prevent Arc RPC rate-limit errors
+  await new Promise(
+    resolve => setTimeout(resolve, 3000)
+  );
+
+
   const tx =
     await contract.createOrder(
       supplierAddress
