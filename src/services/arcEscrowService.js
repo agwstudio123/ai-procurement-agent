@@ -1,6 +1,8 @@
 import { ethers } from "ethers";
 
-const CONTRACT_ADDRESS = process.env.ARC_ESCROW_ADDRESS;
+const CONTRACT_ADDRESS =
+  "0x90bd982FaC935EF9D4a8879fC4bFC85D9501659B";
+
 
 const ABI = [
   {
@@ -29,27 +31,36 @@ export async function createEscrowOrder(
   supplierAddress
 ) {
 
-  const provider = new ethers.JsonRpcProvider(
-    "https://rpc.testnet.arc.network"
+  console.log(
+    "ARC ESCROW CONTRACT:",
+    CONTRACT_ADDRESS
   );
 
-
-  const wallet = new ethers.Wallet(
-    process.env.PRIVATE_KEY,
-    provider
-  );
-
-
-  const contract = new ethers.Contract(
-    CONTRACT_ADDRESS,
-    ABI,
-    wallet
-  );
+  const provider =
+    new ethers.JsonRpcProvider(
+      "https://rpc.testnet.arc.network"
+    );
 
 
-  const tx = await contract.createOrder(
-    supplierAddress
-  );
+  const wallet =
+    new ethers.Wallet(
+      process.env.PRIVATE_KEY,
+      provider
+    );
+
+
+  const contract =
+    new ethers.Contract(
+      CONTRACT_ADDRESS,
+      ABI,
+      wallet
+    );
+
+
+  const tx =
+    await contract.createOrder(
+      supplierAddress
+    );
 
 
   await tx.wait();
