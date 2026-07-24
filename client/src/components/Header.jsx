@@ -9,7 +9,35 @@ export default function Header({ setMenuOpen }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [walletConnected, setWalletConnected] = useState(false);
 
-  useEffect(() => {
+  async function loadNotifications() {
+    try {
+      const supplier = JSON.parse(
+        localStorage.getItem("currentSupplier")
+      );
+
+      const contractor = JSON.parse(
+        localStorage.getItem("currentContractor")
+      );
+
+      const user = supplier || contractor;
+
+      if (!user) return;
+
+      const response = await fetch(
+        `${API_URL}/notifications/${user.id}`
+      );
+
+      const data = await response.json();
+
+      setUnreadCount(
+        data.filter((notification) => !notification.read).length
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function checkWallet() {
     const supplier = JSON.parse(
       localStorage.getItem("currentSupplier")
     );
@@ -20,42 +48,28 @@ export default function Header({ setMenuOpen }) {
 
     const user = supplier || contractor;
 
-    if (!user) return;
-
-    async function loadNotifications() {
-      try {
-        const response = await fetch(
-          `${API_URL}/notifications/${user.id}`
-        );
-
-        const data = await response.json();
-
-        setUnreadCount(
-          data.filter((notification) => !notification.read).length
-        );
-
-      } catch (error) {
-        console.error(error);
-      }
+    if (
+      user &&
+      user.wallet &&
+      user.wallet !== "Not Connected"
+    ) {
+      setWalletConnected(true);
+    } else {
+      setWalletConnected(false);
     }
+  }
 
-    function checkWallet() {
-      if (
-        user.wallet &&
-        user.wallet !== "Not Connected"
-      ) {
-        setWalletConnected(true);
-      } else {
-        setWalletConnected(false);
-      }
-    }
-
+  useEffect(() => {
     loadNotifications();
     checkWallet();
 
-    const notificationInterval = setInterval(
-      loadNotifications,
-      5000
+    const refreshNotifications = () => {
+      loadNotifications();
+    };
+
+    window.addEventListener(
+      "refreshNotifications",
+      refreshNotifications
     );
 
     const walletInterval = setInterval(
@@ -64,10 +78,13 @@ export default function Header({ setMenuOpen }) {
     );
 
     return () => {
-      clearInterval(notificationInterval);
+      window.removeEventListener(
+        "refreshNotifications",
+        refreshNotifications
+      );
+
       clearInterval(walletInterval);
     };
-
   }, []);
 
   return (
@@ -82,7 +99,6 @@ export default function Header({ setMenuOpen }) {
       "
     >
       <div className="flex items-center gap-3">
-
         <button
           onClick={() => setMenuOpen(true)}
           className="
@@ -119,11 +135,9 @@ export default function Header({ setMenuOpen }) {
             AI-powered construction procurement
           </p>
         </div>
-
       </div>
 
       <div className="flex items-center gap-3">
-
         <button
           onClick={() => navigate("/notifications")}
           className="
@@ -182,9 +196,7 @@ export default function Header({ setMenuOpen }) {
           <FaWallet />
 
           <div className="hidden sm:block text-left">
-            <p className="text-xs">
-              Wallet
-            </p>
+            <p className="text-xs">Wallet</p>
 
             <p className="font-bold">
               {walletConnected
@@ -192,9 +204,7 @@ export default function Header({ setMenuOpen }) {
                 : "Connect Wallet"}
             </p>
           </div>
-
         </button>
-
       </div>
     </div>
   );
