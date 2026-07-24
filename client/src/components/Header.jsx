@@ -9,7 +9,7 @@ export default function Header({ setMenuOpen }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [walletConnected, setWalletConnected] = useState(false);
 
-  function checkWallet() {
+  useEffect(() => {
     const supplier = JSON.parse(
       localStorage.getItem("currentSupplier")
     );
@@ -20,104 +20,68 @@ export default function Header({ setMenuOpen }) {
 
     const user = supplier || contractor;
 
-    if (
-      user &&
-      user.wallet &&
-      user.wallet !== "Not Connected"
-    ) {
-      setWalletConnected(true);
-    } else {
-      setWalletConnected(false);
+    if (!user) return;
+
+    async function loadNotifications() {
+      try {
+        const response = await fetch(
+          `${API_URL}/notifications/${user.id}`
+        );
+
+        const data = await response.json();
+
+        setUnreadCount(
+          data.filter((notification) => !notification.read).length
+        );
+
+      } catch (error) {
+        console.error(error);
+      }
     }
-  }
 
-
-  useEffect(() => {
+    function checkWallet() {
+      if (
+        user.wallet &&
+        user.wallet !== "Not Connected"
+      ) {
+        setWalletConnected(true);
+      } else {
+        setWalletConnected(false);
+      }
+    }
 
     loadNotifications();
     checkWallet();
 
+    const notificationInterval = setInterval(
+      loadNotifications,
+      5000
+    );
 
-    const interval = setInterval(() => {
+    const walletInterval = setInterval(
+      checkWallet,
+      10000
+    );
 
-      loadNotifications();
-      checkWallet();
-
-    }, 1000);
-
-
-    return () => clearInterval(interval);
-
+    return () => {
+      clearInterval(notificationInterval);
+      clearInterval(walletInterval);
+    };
 
   }, []);
 
-
-
-  async function loadNotifications() {
-
-    try {
-
-      const supplier = JSON.parse(
-        localStorage.getItem("currentSupplier")
-      );
-
-      const contractor = JSON.parse(
-        localStorage.getItem("currentContractor")
-      );
-
-
-      const user = supplier || contractor;
-
-
-      if (!user) return;
-
-
-
-      const response = await fetch(
-        `${API_URL}/notifications/${user.id}`
-      );
-
-
-      const data = await response.json();
-
-
-
-      const unread = data.filter(
-        (notification) => !notification.read
-      ).length;
-
-
-
-      setUnreadCount(unread);
-
-
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
-
-  }
-
-
-
   return (
-
     <div
       className="
-      flex
-      justify-between
-      items-center
-      mb-8
-      px-4
-      md:px-0
+        flex
+        justify-between
+        items-center
+        mb-8
+        px-4
+        md:px-0
       "
     >
-
-
       <div className="flex items-center gap-3">
-
 
         <button
           onClick={() => setMenuOpen(true)}
@@ -129,55 +93,36 @@ export default function Header({ setMenuOpen }) {
             p-3
           "
         >
-
           <FaBars />
-
         </button>
 
-
-
         <div>
-
           <h1
             className="
-            text-2xl
-            md:text-3xl
-            font-bold
-            text-slate-800
+              text-2xl
+              md:text-3xl
+              font-bold
+              text-slate-800
             "
           >
-
             Dashboard
-
           </h1>
-
-
 
           <p
             className="
-            text-slate-500
-            mt-1
-            hidden
-            sm:block
+              text-slate-500
+              mt-1
+              hidden
+              sm:block
             "
           >
-
             AI-powered construction procurement
-
           </p>
-
-
         </div>
-
 
       </div>
 
-
-
-
-
       <div className="flex items-center gap-3">
-
 
         <button
           onClick={() => navigate("/notifications")}
@@ -192,13 +137,9 @@ export default function Header({ setMenuOpen }) {
             transition
           "
         >
-
-
           <FaBell size={18} />
 
-
           {unreadCount > 0 && (
-
             <span
               className="
                 absolute
@@ -216,19 +157,10 @@ export default function Header({ setMenuOpen }) {
                 font-bold
               "
             >
-
               {unreadCount}
-
             </span>
-
           )}
-
-
         </button>
-
-
-
-
 
         <button
           onClick={() => navigate("/wallet")}
@@ -247,42 +179,23 @@ export default function Header({ setMenuOpen }) {
             transition
           "
         >
-
-
           <FaWallet />
 
-
-
           <div className="hidden sm:block text-left">
-
-
             <p className="text-xs">
-
               Wallet
-
             </p>
 
-
             <p className="font-bold">
-
               {walletConnected
                 ? "Connected"
                 : "Connect Wallet"}
-
             </p>
-
-
           </div>
-
 
         </button>
 
-
       </div>
-
-
     </div>
-
   );
-
 }

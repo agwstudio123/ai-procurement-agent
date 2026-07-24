@@ -4,6 +4,7 @@ import { API_URL } from "../api";
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -19,7 +20,10 @@ export default function Notifications() {
 
       const user = supplier || contractor;
 
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       try {
         const response = await fetch(
@@ -29,40 +33,28 @@ export default function Notifications() {
         const data = await response.json();
 
         setNotifications(data);
+        setLoading(false);
 
-        // Mark notifications as read
-        await fetch(
+        // Mark as read in the background
+        fetch(
           `${API_URL}/notifications/${user.id}/read`,
           {
             method: "PUT",
           }
-        );
+        ).catch(console.error);
 
-        // Update UI
-        setNotifications(
-          data.map((notification) => ({
-            ...notification,
-            read: true,
-          }))
-        );
       } catch (error) {
         console.error(
           "Notification error:",
           error
         );
+
+        setLoading(false);
       }
     }
 
-    // Load immediately
     loadNotifications();
 
-    // Refresh every 3 seconds
-    const interval = setInterval(() => {
-      loadNotifications();
-    }, 3000);
-
-    // Cleanup
-    return () => clearInterval(interval);
   }, []);
 
   function openNotification(notification) {
@@ -74,19 +66,16 @@ export default function Notifications() {
       localStorage.getItem("currentContractor")
     );
 
-    // Chat notification
     if (notification.type === "chat") {
       navigate(`/chat/${notification.orderId}`);
       return;
     }
 
-    // Delivery fee notification
     if (notification.type === "delivery_fee") {
       navigate(`/chat/${notification.orderId}`);
       return;
     }
 
-    // Order notification
     if (notification.type === "order") {
       if (supplier) {
         navigate("/supplier-orders");
@@ -111,11 +100,21 @@ export default function Notifications() {
       </p>
 
       <div className="mt-8 bg-white rounded-xl shadow">
-        {notifications.length === 0 ? (
+
+        {loading ? (
+
+          <div className="p-6 text-gray-500">
+            Loading notifications...
+          </div>
+
+        ) : notifications.length === 0 ? (
+
           <div className="p-6 text-gray-500">
             No notifications.
           </div>
+
         ) : (
+
           notifications.map((notification) => (
             <div
               key={notification.id}
@@ -137,7 +136,9 @@ export default function Notifications() {
               </p>
             </div>
           ))
+
         )}
+
       </div>
     </div>
   );

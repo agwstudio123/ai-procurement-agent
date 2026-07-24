@@ -514,26 +514,23 @@ res.json({
 
 // Get notifications
 app.get("/notifications/:userId", async (req, res) => {
+  console.time("Notifications");
 
   try {
-
     const notifications = await Notification.find({
       userId: Number(req.params.userId),
     }).sort({ createdAt: -1 });
 
+    console.timeEnd("Notifications");
+
     res.json(notifications);
-
   } catch (error) {
-
     console.error(error);
-
     res.status(500).json({
       success: false,
       message: "Failed to fetch notifications",
     });
-
   }
-
 });
 
 // Mark notifications as read

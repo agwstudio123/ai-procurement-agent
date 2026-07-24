@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema({
   id: Number,
-  userId: Number,
+  userId: {
+    type: Number,
+    index: true,
+  },
   role: String,
   type: String,
   orderId: Number,
@@ -15,6 +18,11 @@ const notificationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+notificationSchema.index({
+  userId: 1,
+  createdAt: -1,
 });
 
 export default mongoose.model(

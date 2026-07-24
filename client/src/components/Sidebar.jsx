@@ -87,7 +87,7 @@ export default function Sidebar({ menuOpen, setMenuOpen }) {
 
 
     const interval =
-      setInterval(loadNotifications,1000);
+  setInterval(loadNotifications,5000);
 
 
     return ()=>clearInterval(interval);
