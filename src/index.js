@@ -1092,11 +1092,18 @@ const suppliers = await Supplier.find();
 
 
 // Highest supplier quotation = market reference price
-const marketPrice = Math.max(
-  ...quotations.map(
-    (supplier) => supplier.totalCost
-  )
-);
+const validPrices = quotations
+  .map((supplier) => Number(supplier.totalCost))
+  .filter((price) => price > 0);
+
+
+const marketPrice =
+  validPrices.length > 0
+    ? validPrices.reduce(
+        (sum, price) => sum + price,
+        0
+      ) / validPrices.length
+    : bestSupplier.totalCost;
 
 
 const savings =
