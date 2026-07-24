@@ -1,13 +1,39 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { Buffer } from "buffer"
-import './index.css'
-import App from './App.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Buffer } from "buffer";
+import { Toaster } from "react-hot-toast";
 
-window.Buffer = Buffer
+import "./index.css";
+import App from "./App.jsx";
 
-createRoot(document.getElementById('root')).render(
+window.Buffer = Buffer;
+
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <App />
-  </StrictMode>,
-)
+
+    <Toaster
+      position="top-right"
+      reverseOrder={false}
+      toastOptions={{
+        duration: 3000,
+        style: {
+          borderRadius: "10px",
+          background: "#1e293b",
+          color: "#fff",
+          fontWeight: "500",
+        },
+        success: {
+          style: {
+            background: "#16a34a",
+          },
+        },
+        error: {
+          style: {
+            background: "#dc2626",
+          },
+        },
+      }}
+    />
+  </StrictMode>
+);

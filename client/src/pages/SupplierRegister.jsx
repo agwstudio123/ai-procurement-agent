@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../api";
+import toast from "react-hot-toast";
 
 export default function SupplierRegister() {
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
 
   const [supplier, setSupplier] = useState({
     companyName: "",
@@ -25,6 +28,8 @@ export default function SupplierRegister() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
       const response = await fetch(`${API_URL}/suppliers`);
       const suppliers = await response.json();
@@ -38,7 +43,10 @@ export default function SupplierRegister() {
       );
 
       if (exists) {
-        alert("A supplier with this company name or email already exists.");
+        toast.error(
+          "A supplier with this company name or email already exists."
+        );
+        setLoading(false);
         return;
       }
 
@@ -56,7 +64,6 @@ export default function SupplierRegister() {
 
         wallet: supplier.wallet.trim() || "Not Connected",
 
-        // New suppliers start unverified
         trusted: false,
         trustScore: 0,
 
@@ -80,28 +87,29 @@ export default function SupplierRegister() {
       const result = await saveResponse.json();
 
       if (!result.success) {
-        alert("Failed to register supplier.");
+        toast.error("Failed to register supplier.");
+        setLoading(false);
         return;
       }
 
       localStorage.setItem(
         "currentSupplier",
-        JSON.stringify(newSupplier)
+        JSON.stringify(result.supplier)
       );
 
-      localStorage.setItem(
-        "userType",
-        "supplier"
-      );
+      localStorage.setItem("userType", "supplier");
 
-      alert(
-        "Supplier account created successfully! Your account will become trusted after successfully completing paid orders."
+      toast.success(
+        "Supplier account created successfully!"
       );
 
       navigate("/supplier-dashboard");
     } catch (error) {
       console.error("REGISTER ERROR:", error);
-      alert("Unable to connect to the server.");
+
+      toast.error("Unable to connect to the server.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -167,9 +175,10 @@ export default function SupplierRegister() {
 
           <button
             type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold"
+            disabled={loading}
+            className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white py-3 rounded-lg font-bold"
           >
-            Create Supplier Account
+            {loading ? "Creating Account..." : "Create Supplier Account"}
           </button>
         </form>
       </div>

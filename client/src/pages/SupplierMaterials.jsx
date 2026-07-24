@@ -36,20 +36,39 @@ export default function SupplierMaterials() {
 
       console.log("Matched Supplier:", latestSupplier);
 
-      if (latestSupplier) {
-        setSupplier(latestSupplier);
-
-        localStorage.setItem(
-          "currentSupplier",
-          JSON.stringify(latestSupplier)
+      // IMPORTANT FIX:
+      // If the supplier hasn't appeared in MongoDB yet,
+      // continue using the localStorage copy.
+      if (!latestSupplier) {
+        console.log(
+          "Supplier not found on server yet. Using localStorage."
         );
-      } else {
-        console.log("Supplier NOT found in database.");
+
+        setSupplier(currentSupplier);
+        setLoading(false);
+        return;
       }
+
+      setSupplier(latestSupplier);
+
+      localStorage.setItem(
+        "currentSupplier",
+        JSON.stringify(latestSupplier)
+      );
 
       setLoading(false);
     } catch (error) {
       console.log("LOAD SUPPLIER ERROR:", error);
+
+      // If server fails completely, still use local supplier
+      const currentSupplier = JSON.parse(
+        localStorage.getItem("currentSupplier")
+      );
+
+      if (currentSupplier) {
+        setSupplier(currentSupplier);
+      }
+
       setLoading(false);
     }
   }
@@ -179,7 +198,9 @@ export default function SupplierMaterials() {
 
                 <p className="break-all">
                   <strong>Wallet:</strong>{" "}
-                  {item.wallet || supplier.wallet || "Not provided"}
+                  {item.wallet ||
+                    supplier.wallet ||
+                    "Not provided"}
                 </p>
               </div>
 

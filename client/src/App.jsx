@@ -17,7 +17,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-
+import Wallet from "./pages/Wallet";
 import AIReport from "./components/AIReport";
 import Layout from "./components/Layout";
 import TrustedSuppliers from "./components/TrustedSuppliers";
@@ -542,17 +542,17 @@ export default function App() {
         <Route path="/supplier-register" element={<SupplierRegister />} />
 
         <Route element={<Layout />}>
-          {/* Contractor routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/boq" element={<BOQ />} />
-          <Route path="/contractor-orders" element={<ContractorOrders />} />
-          <Route path="/suppliers" element={<TrustedSuppliers />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/payments" element={<Payments />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/notifications" element={<Notifications />} />
-
+  {/* Contractor routes */}
+  <Route path="/dashboard" element={<Dashboard />} />
+  <Route path="/wallet" element={<Wallet />} />
+  <Route path="/boq" element={<BOQ />} />
+  <Route path="/contractor-orders" element={<ContractorOrders />} />
+  <Route path="/suppliers" element={<TrustedSuppliers />} />
+  <Route path="/history" element={<History />} />
+  <Route path="/payments" element={<Payments />} />
+  <Route path="/analytics" element={<Analytics />} />
+  <Route path="/settings" element={<Settings />} />
+  <Route path="/notifications" element={<Notifications />} />
           {/* Supplier routes */}
           <Route path="/supplier-dashboard" element={<SupplierDashboard />} />
           <Route path="/supplier-earnings" element={<SupplierEarnings />} />
